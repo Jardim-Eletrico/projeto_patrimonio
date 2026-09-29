@@ -2,7 +2,7 @@ class Usuario {
   int? id;
   String email;
   String nome;
-  bool role;
+  String role;
   String cpf;
   String telefone;
   String matricula;
@@ -80,4 +80,4 @@ class Usuario {
       'totalPatrimonios': totalPatrimonios,
     };
   }
-}
+} 
