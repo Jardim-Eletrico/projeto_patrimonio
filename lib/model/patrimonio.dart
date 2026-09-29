@@ -34,4 +34,26 @@ class Patrimonio {
     required this.createdAt,
     required this.updatedAt,
   });
+
+  factory Patrimonio.fromJson(Map<String, dynamic> json) {
+  return Patrimonio(
+    id: json['id'],
+    codigo: json['codigo'],
+    nome: json['nome'],
+    descricao: json['descricao'],
+    categoria: json['categoria'],
+    marca: json['marca'],
+    modelo: json['modelo'],
+    numeroSerie: json['numeroSerie'],
+    estadoConservacao: json['estadoConservacao'],
+    localizacao: json['localizacao'],
+    status: json['status'],
+    adminId: json['adminId'],
+    professorId: json['professorId'],
+    observacoes: json['observacoes'],
+    createdAt: DateTime.parse(json['createdAt']), //parse converte o datetime para String
+    updatedAt: DateTime.parse(json['updatedAt']),
+  );
+  }
 }
+
