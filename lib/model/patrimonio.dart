@@ -55,5 +55,26 @@ class Patrimonio {
     updatedAt: DateTime.parse(json['updatedAt']),
   );
   }
+
+  Map<String, dynamic> toJson() {
+  return {
+    'id': id,
+    'codigo': codigo,
+    'nome': nome,
+    'descricao': descricao,
+    'categoria': categoria,
+    'marca': marca,
+    'modelo': modelo,
+    'numeroSerie': numeroSerie,
+    'estadoConservacao': estadoConservacao,
+    'localizacao': localizacao,
+    'status': status,
+    'adminId': adminId,
+    'professorId': professorId,
+    'observacoes': observacoes,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+  };
+}
 }
 
