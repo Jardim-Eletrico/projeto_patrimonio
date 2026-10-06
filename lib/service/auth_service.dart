@@ -54,4 +54,39 @@ Future<Usuario?> register(Map<String, dynamic> dados) async {
     final response = await post("$baseurl/api/auth/logout", {}, headers: {"Authorization": "Bearer $acessToken"},);
     return response.isOk;
   }
+//=======================================//============================================
+
+  Future<Response> forgotPassword(String email) async {
+  return await post(
+    "$baseurl/api/auth/forgot-password",
+    {
+      "email": email,
+    },
+  );
+}
+
+Future<Response> verifyCode(String email, String code) async {
+  return await post(
+    "$baseurl/api/auth/verify-code",
+    {
+      "email": email,
+      "code": code,
+    },
+  );
+}
+
+Future<Response> resetPassword(
+  String email,
+  String code,
+  String newPassword,
+) async {
+  return await post(
+    "$baseurl/api/auth/reset-password",
+    {
+      "email": email,
+      "code": code,
+      "new_password": newPassword,
+    },
+  );
+}
 }

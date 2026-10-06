@@ -1,17 +1,45 @@
 import 'package:get/get.dart';
+import '../model/metricarusuarios.dart';
 import '../model/usuario.dart';
-class UsuariosService extends GetConnect{
+
+class UsuariosService extends GetConnect {
   String baseurl = "http://localhost:8081";
-  Future<Response<List<Usuario>>> listarUsuarios(){
-    return get('$baseurl/api/admin/users', decoder: (dados) => decoder(dados));
+
+  Future<Response<List<Usuario>>> listarUsuarios() {
+    return get(
+      '$baseurl/api/admin/users',
+      decoder: (dados) => decoder(dados),
+    );
   }
-Future<Response<List<Usuario>>> listarProfessores()
-{
-    return get('$baseurl/api/admin/professores', decoder: (dados) => decoder(dados));
+
+  Future<Response> alterarRole(int id, String role) {
+    return patch('$baseurl/api/admin/users/$id/role', {
+      'role': role,
+    });
   }
-Future<Response> postar(Usuario usuario)
-{
-    return post('$baseurl/api/admin/professores', usuario.toJson());
+
+  Future<Response<MetricasUsuarios>> obterMetricas() {
+    return get(
+      '$baseurl/api/admin/users/metrics',
+      decoder: (dados) => MetricasUsuarios.fromJson(dados),
+    );
   }
-Future<Response> buscarProfessor(int id){
-      return get('$baseurl/api/admin/professores/${id.toString()}');
+
+  Future<Response<List<Usuario>>> listarProfessores() {
+    return get(
+      '$baseurl/api/admin/professores',
+      decoder: (dados) => decoder(dados),
+    );
+  }
+
+  Future<Response> postar(Usuario usuario) {
+    return post(
+      '$baseurl/api/admin/professores',
+      usuario.toJson(),
+    );
+  }
+
+  Future<Response> buscarProfessor(int id) {
+    return get('$baseurl/api/admin/professores/${id.toString()}');
+  }
+}
