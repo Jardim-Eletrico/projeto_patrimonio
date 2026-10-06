@@ -24,7 +24,7 @@ class AuthService extends GetConnect {
 
   Future<Token?> refreshToken(String refreshToken) async {
   final response = await post(
-    "$baseUrl/api/auth/refresh",
+    "$baseurl/api/auth/refresh",
     {
       'refresh': refreshToken,
     },
@@ -39,7 +39,7 @@ class AuthService extends GetConnect {
 
 Future<Usuario?> register(Map<String, dynamic> dados) async {
   final response = await post(
-    "$baseUrl/api/auth/register",
+    "$baseurl/api/auth/register",
     dados,
   );
 
