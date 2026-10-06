@@ -9,3 +9,4 @@ Future<Response<List<Usuario>>> listarProfessores()
 {
     return get('$baseurl/api/admin/professores', decoder: (dados) => decoder(dados));
   }
+Future<Response> postar(Usuario usuario)
