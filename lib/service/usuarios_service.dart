@@ -5,3 +5,4 @@ class UsuariosService extends GetConnect{
   Future<Response<List<Usuario>>> listarUsuarios(){
     return get('$baseurl/api/admin/users', decoder: (dados) => decoder(dados));
   }
+Future<Response<List<Usuario>>> listarProfessores()
