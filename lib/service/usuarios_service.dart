@@ -13,3 +13,5 @@ Future<Response> postar(Usuario usuario)
 {
     return post('$baseurl/api/admin/professores', usuario.toJson());
   }
+Future<Response> buscarProfessor(int id){
+      return get('$baseurl/api/admin/professores/${id.toString()}');
