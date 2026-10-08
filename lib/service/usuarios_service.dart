@@ -57,6 +57,9 @@ Future<Response<Usuario>> atualizarPerfil(Usuario usuario) {
     decoder: (dados) => Usuario.fromJson(dados),
   );
 }
+Future<Response> deletarUsuario(int id) {
+  return delete('$baseurl/api/admin/users/$id');
+}
 
   List<Usuario> decoder(dynamic dados){
     return (dados as List) .map((json) => Usuario.fromJson(json)).toList();

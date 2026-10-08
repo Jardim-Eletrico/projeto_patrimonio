@@ -28,7 +28,27 @@ class UsuarioControler extends GetxController {
       carregando.value = false;
     }
   }
+
+    Future<void> deletarUsuario(int id) async{
+    final loginControler = Get.find<LoginCongtroler>();
+
+    if (loginControler.usuario.value?.role != 'admin'){
+      return;
+    }
+    carregando.value = true;
+    try {
+      final response = await service.deletarUsuario(id);
+
+      if(response.isOk){
+
+      }
+    }
+    finally{
+      carregando.value = false;
+
+    }
   }
 
-  Future<void> deletarUsuario(int id) async{
+    Future<void> 
   }
+
