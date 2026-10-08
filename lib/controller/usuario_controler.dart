@@ -11,7 +11,7 @@ class UsuarioControler extends GetxController {
 
   Future<void> cadastrarUsuario(Usuario usuario) async {
 
-    final loginControler = Get.find<LoginCongtroler>(); //ACESSA A INSTÂNCIA DO USUARIO CADASTRADO
+    final loginControler = Get.find<LoginCongtroler>(); //ACESSA A INSTÂNCIA DO USUARIO LOGADO
 
     if (loginControler.usuario.value?.role != 'admin'){
       return;
@@ -28,7 +28,7 @@ class UsuarioControler extends GetxController {
       carregando.value = false;
     }
   }
+  }
 
   Future<void> deletarUsuario(int id) async{
-  }
   }
