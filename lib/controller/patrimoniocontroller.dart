@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
+import 'package:projeto_patrimonio/controller/login_controler.dart';
 import '../model/patrimonio.dart';
 import '../service/patrimonio_service.dart';
+import '../model/usuario.dart';
 
 class Patrimoniocontroller extends GetxController {
   final PatrimonioService service = PatrimonioService();
@@ -8,6 +10,7 @@ class Patrimoniocontroller extends GetxController {
   final patrimonio = Rxn<Patrimonio>();
   final patrimonios = <Patrimonio>[].obs;
   final carregando = false.obs;
+  final usuario = Rxn<Usuario>();
 
   Future<void> listarPatrimonios() async {
     carregando.value = true;
@@ -41,5 +44,16 @@ class Patrimoniocontroller extends GetxController {
   finally{
     carregando.value = false;
   }
+  }
+
+  Future<void> cadastroPatrimonio(Patrimonio patrimonio) async{
+    final loginControler = Get.find<LoginCongtroler>();
+
+    if (loginControler.usuario.value?.role != 'admin'){
+      Get.snackbar("Aceso Negado:", "Você não tem permissão para acessar essa função");
+      return;
+    }
+    carregando.value = true;
+    
   }
 }
