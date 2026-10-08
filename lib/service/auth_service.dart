@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 class AuthService extends GetConnect {
 
   String baseurl = "http://localhost:8081";
-  Future<Token?> login(String email, String password) async {
+  Future<Response<Token>> login(String email, String password) async {
     
     final response = await post(
       "$baseurl/api/auth/login",
@@ -16,10 +16,13 @@ class AuthService extends GetConnect {
       });
 
       if(response.isOk){
-        return Token.fromJson(response.body);
+        return Response<Token>(statusCode: response.statusCode, body: Token.fromJson(response.body));
       }
 
-      return null;
+      return Response<Token>(
+        statusCode: response.statusCode,
+        statusText: response.statusText,
+        );
   }
 
   Future<Token?> refreshToken(String refreshToken) async {

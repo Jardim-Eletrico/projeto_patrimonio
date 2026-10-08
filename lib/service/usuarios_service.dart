@@ -42,4 +42,23 @@ class UsuariosService extends GetConnect {
   Future<Response> buscarProfessor(int id) {
     return get('$baseurl/api/admin/professores/${id.toString()}');
   }
+
+  Future<Response<Usuario>> obterPerfil() {
+  return get(
+    '$baseurl/api/profile',
+    decoder: (dados) => Usuario.fromJson(dados),
+  );
+}
+
+Future<Response<Usuario>> atualizarPerfil(Usuario usuario) {
+  return put(
+    '$baseurl/api/profile',
+    usuario.toJson(),
+    decoder: (dados) => Usuario.fromJson(dados),
+  );
+}
+
+  List<Usuario> decoder(dynamic dados){
+    return (dados as List) .map((json) => Usuario.fromJson(json)).toList();
+  }
 }
