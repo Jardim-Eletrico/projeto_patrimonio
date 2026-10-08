@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
+import 'package:projeto_patrimonio/model/token.dart';
 import 'package:projeto_patrimonio/model/usuario.dart';
-import 'package:projeto_patrimonio/service/usuarios_service.dart';
 import '../service/auth_service.dart';
 
 
@@ -10,6 +10,7 @@ class LoginCongtroler extends GetxController {
 
   final carregando = false.obs;
   final erro = ''.obs;
+  final token = Rxn<Token>();
 
   final usuario = Rxn<Usuario>();
 
@@ -53,6 +54,50 @@ class LoginCongtroler extends GetxController {
 
       }
     } finally {
+      carregando.value = false;
+    }
+  }
+
+//====================================================
+  Future<void> esqueceuSenha(String email) async{
+    carregando.value = true;
+
+    try{
+      final response = await authService.forgotPassword(email);
+
+      if (response.isOk){
+
+      }
+
+    }finally{
+      carregando.value = false;
+    }
+  }
+
+  Future<void> verificarCodigo(String email, String code) async{
+    carregando.value = true;
+
+    try{
+      final response = await authService.verifyCode(email, code);
+
+      if (response.isOk){
+
+      }
+    }finally{
+      carregando.value = false;
+    }
+  }
+
+  Future<void> resetPassword(String email, String code, String newPassword) async{
+    carregando.value = true;
+
+    try{
+      final response = await authService.resetPassword(email, code, newPassword);
+
+      if (response.isOk){
+
+      }
+    }finally{
       carregando.value = false;
     }
   }

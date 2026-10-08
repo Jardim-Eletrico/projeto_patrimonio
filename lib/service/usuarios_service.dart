@@ -40,29 +40,39 @@ class UsuariosService extends GetConnect {
   }
 
   
-
+Future<Response> deletarUsuario(int id) {
+  return delete(
+    '$baseurl/api/admin/users/$id',
+  );
+}
 
   Future<Response> buscarProfessor(int id) {
     return get('$baseurl/api/admin/professores/${id.toString()}');
   }
 
-  Future<Response<Usuario>> obterPerfil() {
+  Future<Response<Usuario>> obterPerfil(String acessToken) {
   return get(
     '$baseurl/api/profile',
+    headers: {
+      'Authorization' : 'Bearer $acessToken',
+    },
     decoder: (dados) => Usuario.fromJson(dados),
   );
 }
 
-Future<Response<Usuario>> atualizarPerfil(Usuario usuario) {
-  return put(
-    '$baseurl/api/profile',
-    usuario.toJson(),
-    decoder: (dados) => Usuario.fromJson(dados),
-  );
-}
-Future<Response> deletarUsuario(int id) {
-  return delete('$baseurl/api/admin/users/$id');
-}
+  Future<Response<Usuario>> atualizarPerfil(
+    Usuario usuario,
+    String accessToken,
+  ) {
+    return put(
+      '$baseurl/api/profile',
+      usuario.toJson(),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+      decoder: (dados) => Usuario.fromJson(dados),
+    );
+  }
 
   List<Usuario> decoder(dynamic dados){
     return (dados as List) .map((json) => Usuario.fromJson(json)).toList();

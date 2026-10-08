@@ -40,18 +40,6 @@ class AuthService extends GetConnect {
   return null;
 }
 
-Future<Usuario?> register(Map<String, dynamic> dados) async {
-  final response = await post(
-    "$baseurl/api/auth/register",
-    dados,
-  );
-
-  if (response.isOk) {
-    return Usuario.fromJson(response.body);
-  }
-
-  return null;
-}
 
   Future<bool> logout(String acessToken) async{
     final response = await post("$baseurl/api/auth/logout", {}, headers: {"Authorization": "Bearer $acessToken"},);
@@ -92,7 +80,7 @@ Future<Response> resetPassword(
     },
   );
 }
-
+//============================================================
 Future<Response> cadastrarCoordenador(Usuario usuario){
     return post(
       '$baseurl/api/auth/register', usuario.toJson(),

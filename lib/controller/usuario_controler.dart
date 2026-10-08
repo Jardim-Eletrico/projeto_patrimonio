@@ -8,6 +8,7 @@ class UsuarioControler extends GetxController {
 
   final usuarios = <Usuario>[].obs;
   final carregando = false.obs;
+  final usuario = Rxn<Usuario>();
 
   Future<void> cadastrarProf(Usuario usuario) async {
 
@@ -73,6 +74,28 @@ class UsuarioControler extends GetxController {
       carregando.value = false;
     }
   }
+
+  Future<void> buscarProf(int id) async{
+    final loginControler = Get.find<LoginCongtroler>();
+
+    if (loginControler.usuario.value?.role != 'admin'){
+      return;
+    }
+
+    carregando.value = true;
+
+    try {
+      final response = await service.buscarProfessor(id);
+      
+      if (response.isOk){
+
+        usuarios.assignAll(response.body ?? []); //pega todos usuarios da api e põe numa lista
+
+      }
+    }finally{
+      carregando.value = false;
+    }
+  }
 //=====================================================
     Future<void> deletarUsuario(int id) async{
     final loginControler = Get.find<LoginCongtroler>();
@@ -93,6 +116,54 @@ class UsuarioControler extends GetxController {
 
     }
   }
+//=====================================================
+
+Future<void> perfilObter() async {
+  carregando.value = true;
+
+  try {
+    final loginController = Get.find<LoginCongtroler>();
+    final accessToken = loginController.token.value?.access;
+
+    if (accessToken == null) {
+      return;
+    }
+
+    final response = await service.obterPerfil(accessToken);
+
+    if (response.isOk) {
+      usuario.value = response.body;
+
+      // Aqui você pode guardar ou atualizar o perfil recebido.
+    }
+  } finally {
+    carregando.value = false;
+  }
+}
+
+Future<void> perfilEditar() async{
+  carregando.value = true;
+
+  try{
+    final loginController = Get.find<LoginCongtroler>();
+    final accessToken = loginController.token.value?.access;
+
+    if (accessToken == null) {
+      return;
+    }
+
+    final response = await service.atualizarPerfil(usuario.value!, accessToken);
+
+    if (response.isOk) {
+      usuario.value = response.body;
+
+      // Aqui você pode guardar ou atualizar o perfil recebido.
+    }
+  }finally{
+    carregando.value = false;
+
+  }
+}
 
 }
 
