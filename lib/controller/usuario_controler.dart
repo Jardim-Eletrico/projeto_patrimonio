@@ -9,7 +9,7 @@ class UsuarioControler extends GetxController {
   final usuarios = <Usuario>[].obs;
   final carregando = false.obs;
 
-  Future<void> cadastrarUsuario(Usuario usuario) async {
+  Future<void> cadastrarProf(Usuario usuario) async {
 
     final loginControler = Get.find<LoginCongtroler>(); //ACESSA A INSTÂNCIA DO USUARIO LOGADO
 
@@ -19,7 +19,7 @@ class UsuarioControler extends GetxController {
 
     carregando.value = true;
     try {
-      final response = await service.postar(usuario);
+      final response = await service.cadastrarProfessor(usuario);
 
       if (response.isOk) {
 
@@ -29,6 +29,70 @@ class UsuarioControler extends GetxController {
     }
   }
 
+  Future<void> cadastrarAdm(Usuario usuario) async {
+
+    final loginControler = Get.find<LoginCongtroler>(); //ACESSA A INSTÂNCIA DO USUARIO LOGADO
+
+    if (loginControler.usuario.value?.role != 'admin'){
+      return;
+    }
+
+    carregando.value = true;
+    try {
+      final response = await service.cadastrarCoordenador(usuario);
+
+      if (response.isOk) {
+
+      }
+    } finally {
+      carregando.value = false;
+    }
+  }
+//=====================================================
+  Future<void> listarUsuarios() async{
+    final loginControler = Get.find<LoginCongtroler>();
+
+    if (loginControler.usuario.value?.role != 'admin'){
+      return;
+    }
+
+    carregando.value = true;
+
+    try {
+      final response = await service.listarUsuarios();
+      
+      if (response.isOk){
+
+        usuarios.assignAll(response.body ?? []); //pega todos usuarios da api e põe numa lista
+
+      }
+    }finally{
+      carregando.value = false;
+    }
+  }
+
+  Future<void> listarProfessores() async{
+    final loginControler = Get.find<LoginCongtroler>();
+
+    if (loginControler.usuario.value?.role != 'admin'){
+      return;
+    }
+
+    carregando.value = true;
+
+    try {
+      final response = await service.listarProfessores();
+      
+      if (response.isOk){
+
+        usuarios.assignAll(response.body ?? []); //pega todos usuarios da api e põe numa lista
+
+      }
+    }finally{
+      carregando.value = false;
+    }
+  }
+//=====================================================
     Future<void> deletarUsuario(int id) async{
     final loginControler = Get.find<LoginCongtroler>();
 
@@ -49,6 +113,5 @@ class UsuarioControler extends GetxController {
     }
   }
 
-    Future<void> 
-  }
+}
 
