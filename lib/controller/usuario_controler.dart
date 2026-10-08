@@ -29,25 +29,6 @@ class UsuarioControler extends GetxController {
     }
   }
 
-  Future<void> cadastrarAdm(Usuario usuario) async {
-
-    final loginControler = Get.find<LoginCongtroler>(); //ACESSA A INSTÂNCIA DO USUARIO LOGADO
-
-    if (loginControler.usuario.value?.role != 'admin'){
-      return;
-    }
-
-    carregando.value = true;
-    try {
-      final response = await service.cadastrarCoordenador(usuario);
-
-      if (response.isOk) {
-
-      }
-    } finally {
-      carregando.value = false;
-    }
-  }
 //=====================================================
   Future<void> listarUsuarios() async{
     final loginControler = Get.find<LoginCongtroler>();

@@ -39,11 +39,7 @@ class UsuariosService extends GetConnect {
     );
   }
 
-  Future<Response> cadastrarCoordenador(Usuario usuario){
-    return post(
-      '$baseurl/api/auth/register', usuario.toJson(),
-    );
-  }
+  
 
 
   Future<Response> buscarProfessor(int id) {

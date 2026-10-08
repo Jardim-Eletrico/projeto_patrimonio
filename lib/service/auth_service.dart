@@ -92,4 +92,10 @@ Future<Response> resetPassword(
     },
   );
 }
+
+Future<Response> cadastrarCoordenador(Usuario usuario){
+    return post(
+      '$baseurl/api/auth/register', usuario.toJson(),
+    );
+  }
 }

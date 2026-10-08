@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
 import 'package:projeto_patrimonio/model/usuario.dart';
+import 'package:projeto_patrimonio/service/usuarios_service.dart';
 import '../service/auth_service.dart';
+
+
 
 class LoginCongtroler extends GetxController {
   final AuthService authService = AuthService();
@@ -31,6 +34,26 @@ class LoginCongtroler extends GetxController {
     finally{
 
     carregando.value = false;
+    }
+  }
+
+  Future<void> cadastrarAdm(Usuario usuario) async {
+
+    final loginControler = LoginCongtroler();
+
+    if (loginControler.usuario.value?.role != 'admin'){
+      return;
+    }
+
+    carregando.value = true;
+    try {
+      final response = await authService.cadastrarCoordenador(usuario);
+
+      if (response.isOk) {
+
+      }
+    } finally {
+      carregando.value = false;
     }
   }
 }
