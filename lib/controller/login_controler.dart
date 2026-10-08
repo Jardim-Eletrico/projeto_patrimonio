@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:projeto_patrimonio/model/usuario.dart';
 import '../service/auth_service.dart';
 
 class LoginCongtroler extends GetxController {
@@ -7,9 +8,13 @@ class LoginCongtroler extends GetxController {
   final carregando = false.obs;
   final erro = ''.obs;
 
+  final usuario = Rxn<Usuario>();
+
   Future<void> login(String email, String password) async {
     carregando.value = true;
     erro.value = '';
+
+    try{
 
     final response = await authService.login(email, password);
 
@@ -22,8 +27,10 @@ class LoginCongtroler extends GetxController {
     } else {
       erro.value = "Login ou senha inválidos";
     }
+    }
+    finally{
 
     carregando.value = false;
-
+    }
   }
 }
