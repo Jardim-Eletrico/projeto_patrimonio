@@ -101,6 +101,7 @@ class UsuarioControler extends GetxController {
     final loginControler = Get.find<LoginCongtroler>();
 
     if (loginControler.usuario.value?.role != 'admin'){
+      Get.snackbar("Aceso Negado:", "Você não tem permissão para acessar essa função");
       return;
     }
     carregando.value = true;
@@ -108,7 +109,7 @@ class UsuarioControler extends GetxController {
       final response = await service.deletarUsuario(id);
 
       if(response.isOk){
-
+        Get.snackbar("Sucesso:", "Usuário deletado");
       }
     }
     finally{
@@ -134,7 +135,6 @@ Future<void> perfilObter() async {
     if (response.isOk) {
       usuario.value = response.body;
 
-      // Aqui você pode guardar ou atualizar o perfil recebido.
     }
   } finally {
     carregando.value = false;
@@ -157,7 +157,6 @@ Future<void> perfilEditar() async{
     if (response.isOk) {
       usuario.value = response.body;
 
-      // Aqui você pode guardar ou atualizar o perfil recebido.
     }
   }finally{
     carregando.value = false;
