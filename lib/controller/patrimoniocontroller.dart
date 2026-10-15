@@ -23,15 +23,19 @@ class Patrimoniocontroller extends GetxController {
 
   Future<void> listarPatrimonios() async {
     carregando.value = true;
+    erro.value = '';
 
-    final response = await service.listarPatrimonios();
-
-    if (response.isOk && response.body != null) {
-      patrimonios.value = response.body!;
+    try {
+      final response = await service.listarPatrimonios();
+      
+      if (response.isOk) {
+        patrimonios.assignAll(response.body ?? []);
+      } else {
+        erro.value = ;
+      }
+    } finally {
+      carregando.value = false;
     }
-
-    carregando.value = false;
-  }
 
   @override
   void onInit(){
