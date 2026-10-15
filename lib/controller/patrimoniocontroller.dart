@@ -13,6 +13,10 @@ class Patrimoniocontroller extends GetxController {
   final carregando = false.obs;
   final erro = ''.obs;
 
+  void mostrarErro([String? mensagem]){
+    erro.value = mensagem ?? "Ocorreu um erro inesperado";
+  }
+
   bool get podeEditar => authService.ehAdmin;
 
   @override
@@ -31,8 +35,10 @@ class Patrimoniocontroller extends GetxController {
       if (response.isOk) {
         patrimonios.assignAll(response.body ?? []);
       } else {
-        erro.value = ;
+        mostrarErro();
       }
+    } catch(e){
+      mostrarErro('Erro ao carregar os patrimonios');
     } finally {
       carregando.value = false;
     }

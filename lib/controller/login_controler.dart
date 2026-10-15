@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:projeto_patrimonio/model/token.dart';
 import 'package:projeto_patrimonio/model/usuario.dart';
 import '../service/auth_service.dart';
 import '../service/usuarios_service.dart';
