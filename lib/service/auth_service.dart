@@ -3,6 +3,10 @@ import '../model/usuario.dart';
 import 'package:get/get.dart';
 
 class AuthService extends GetConnect {
+  final token = Rxn<Token>();
+  final usuario = Rxn<Usuario>();
+
+  bool get ehAdmin => usuario.value?.role == 'admin';
 
   String baseurl = "http://localhost:8081";
   Future<Response<Token>> login(String email, String password) async {

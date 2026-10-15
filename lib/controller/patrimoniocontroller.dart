@@ -1,16 +1,25 @@
 import 'package:get/get.dart';
-import 'package:projeto_patrimonio/controller/login_controler.dart';
 import '../model/patrimonio.dart';
 import '../service/patrimonio_service.dart';
-import '../model/usuario.dart';
+import '../service/auth_service.dart';
 
 class Patrimoniocontroller extends GetxController {
-  final PatrimonioService service = PatrimonioService();
+  final PatrimonioService service;
+  final AuthService authService;
+  Patrimoniocontroller(this.service, this.authService);
 
-  final patrimonio = Rxn<Patrimonio>();
   final patrimonios = <Patrimonio>[].obs;
+  final patrimonio = Rxn<Patrimonio>();
   final carregando = false.obs;
-  final usuario = Rxn<Usuario>();
+  final erro = ''.obs;
+
+  bool get podeEditar => authService.ehAdmin;
+
+  @override
+  void onInit() {
+    super.onInit();
+    listarPatrimonios();
+  }
 
   Future<void> listarPatrimonios() async {
     carregando.value = true;

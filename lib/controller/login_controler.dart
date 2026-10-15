@@ -2,17 +2,17 @@ import 'package:get/get.dart';
 import 'package:projeto_patrimonio/model/token.dart';
 import 'package:projeto_patrimonio/model/usuario.dart';
 import '../service/auth_service.dart';
+import '../service/usuarios_service.dart';
 
 
 
 class LoginCongtroler extends GetxController {
-  final AuthService authService = AuthService();
+  final AuthService authService;
+  final UsuariosService usuariosService;
+  LoginCongtroler(this.authService, this.usuariosService);
 
   final carregando = false.obs;
   final erro = ''.obs;
-  final token = Rxn<Token>();
-
-  final usuario = Rxn<Usuario>();
 
   Future<void> login(String email, String password) async {
     carregando.value = true;
@@ -22,14 +22,18 @@ class LoginCongtroler extends GetxController {
 
     final response = await authService.login(email, password);
 
-    if (response.isOk) {
-      final token = response.body!;
+    if (!response.isOk) {
+      erro.value = response.statusCode == null ? 'Sem conexão' : 'Login ou senha inválidos';
+      return;
+    }
 
-      print(token.access);
-      print(token.refresh);
-
+    authService.token.value = response.body;
+    final perfil = await usuariosService.obterPerfil(response.body!.access);
+    if (perfil.isOk) {
+      authService.usuario.value = perfil.body;
+      Get.offNamed('/patrimonios');
     } else {
-      erro.value = "Login ou senha inválidos";
+      erro.value = 'Erro ao obter perfil do usuário';
     }
     }
     finally{
@@ -39,10 +43,7 @@ class LoginCongtroler extends GetxController {
   }
 
   Future<void> cadastrarAdm(Usuario usuario) async {
-
-    final loginControler = LoginCongtroler();
-
-    if (loginControler.usuario.value?.role != 'admin'){
+    if (authService.usuario.value?.role != 'admin'){
       return;
     }
 
