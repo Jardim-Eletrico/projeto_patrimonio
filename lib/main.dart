@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:device_preview/device_preview.dart';
 
-import 'package:projeto_patrimonio/binding/InicialBinding.dart';
-import 'package:projeto_patrimonio/binding/LoginBinding.dart';
-import 'package:projeto_patrimonio/ui/login_view.dart';
+import 'binding/InicialBinding.dart';
+import 'routes/app_pages.dart';
+import 'routes/app_routes.dart';
+
 void main() {
+  DevicePreview.enable(enabled: !kReleaseMode);
   runApp(const MyApp());
 }
 
@@ -14,17 +18,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Patrimônio',
       debugShowCheckedModeBanner: false,
-      initialBinding: InicialBinding(),
-      initialRoute: '/login',
-      getPages: [
-        GetPage(
-          name: '/login',
-          page: () => const LoginView(),
-          binding: LoginBinding(),
-        ),
-      ],
+      initialBinding: InitialBinding(),
+      initialRoute: AppRoutes.login,
+      getPages: AppPages.pages,
     );
   }
 }

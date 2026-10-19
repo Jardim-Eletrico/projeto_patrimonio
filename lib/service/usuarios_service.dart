@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 import '../model/metricarusuarios.dart';
 import '../model/usuario.dart';
 
 class UsuariosService extends GetConnect {
-  String baseurl = "http://localhost:8081";
+  String baseurl = "http://172.31.80.1:8081";
 
   Future<Response<List<Usuario>>> listarUsuarios() {
     return get(
@@ -50,13 +51,34 @@ Future<Response> deletarUsuario(int id) {
     return get('$baseurl/api/admin/professores/${id.toString()}');
   }
 
-  Future<Response<Usuario>> obterPerfil(String acessToken) {
-  return get(
+  Future<Response<Usuario>> obterPerfil(String acessToken) async {
+  final response = await get<dynamic>(
     '$baseurl/api/profile',
     headers: {
-      'Authorization' : 'Bearer $acessToken',
+      'Authorization': 'Bearer $acessToken',
     },
-    decoder: (dados) => Usuario.fromJson(dados),
+  );
+
+  debugPrint('Status do perfil: ${response.statusCode}');
+  debugPrint('Resposta do perfil: ${response.body}');
+
+  final dados = response.body;
+
+  if (response.isOk && dados is Map) {
+    final usuario = Usuario.fromJson(
+      Map<String, dynamic>.from(dados),
+    );
+
+    return Response<Usuario>(
+      statusCode: response.statusCode,
+      statusText: response.statusText,
+      body: usuario,
+    );
+  }
+
+  return Response<Usuario>(
+    statusCode: response.statusCode,
+    statusText: response.statusText,
   );
 }
 

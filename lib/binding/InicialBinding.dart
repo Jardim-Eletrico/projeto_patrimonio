@@ -9,6 +9,9 @@ class InitialBinding extends Bindings {
     Get.put(AuthService(), permanent: true);
 
     Get.lazyPut(() => UsuariosService(), fenix: true);
-    Get.lazyPut(() => PatrimonioService(), fenix: true);
+    Get.lazyPut<PatrimonioService>(
+  () => PatrimonioService(Get.find<AuthService>()),
+  fenix: true,
+);
   }
 }

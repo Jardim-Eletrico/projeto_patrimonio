@@ -1,6 +1,7 @@
 import '../model/token.dart';
 import '../model/usuario.dart';
 import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthService extends GetConnect {
   final token = Rxn<Token>();
@@ -8,16 +9,20 @@ class AuthService extends GetConnect {
 
   bool get ehAdmin => usuario.value?.role == 'admin';
 
-  String baseurl = "http://localhost:8081";
+  String baseurl = "http://172.31.80.1:8081";
   Future<Response<Token>> login(String email, String password) async {
     
     final response = await post(
+      
       "$baseurl/api/auth/login",
       {
 
         'email':email,
         'password': password,
       });
+
+      debugPrint('Status: ${response.statusCode}');
+      debugPrint('Body: ${response.body}');
 
       if(response.isOk){
         return Response<Token>(statusCode: response.statusCode, body: Token.fromJson(response.body));

@@ -35,26 +35,28 @@ class Patrimonio {
     required this.updatedAt,
   });
 
-  factory Patrimonio.fromJson(Map<String, dynamic> json) {
+  
+factory Patrimonio.fromJson(Map<String, dynamic> json) {
   return Patrimonio(
-    id: json['id'],
-    codigo: json['codigo'],
-    nome: json['nome'],
-    descricao: json['descricao'],
-    categoria: json['categoria'],
-    marca: json['marca'],
-    modelo: json['modelo'],
-    numeroSerie: json['numeroSerie'],
-    estadoConservacao: json['estadoConservacao'],
-    localizacao: json['localizacao'],
-    status: json['status'],
-    adminId: json['adminId'],
-    professorId: json['professorId'],
-    observacoes: json['observacoes'],
-    createdAt: DateTime.parse(json['createdAt']), //parse converte o datetime para String
-    updatedAt: DateTime.parse(json['updatedAt']),
+    id: json['id'] as int?,
+    codigo: json['codigo'] as String,
+    nome: json['nome'] as String,
+    descricao: json['descricao'] as String,
+    categoria: json['categoria'] as String,
+    marca: json['marca'] as String,
+    modelo: json['modelo'] as String,
+    numeroSerie: json['numeroSerie'] as String,
+    estadoConservacao: json['estadoConservacao'] as String,
+    localizacao: json['localizacao'] as String,
+    status: json['status'] as String,
+    adminId: json['adminId'] as int?,
+    professorId: json['professorId']?.toString(),
+    observacoes: json['observacoes'] as String?,
+    createdAt: DateTime.parse(json['createdAt'] as String),
+    updatedAt: DateTime.parse(json['updatedAt'] as String),
   );
-  }
+}
+
 
   Map<String, dynamic> toJson() {
   return {

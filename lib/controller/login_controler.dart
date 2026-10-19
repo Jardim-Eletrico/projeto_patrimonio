@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:projeto_patrimonio/model/usuario.dart';
 import '../service/auth_service.dart';
@@ -12,6 +13,25 @@ class LoginCongtroler extends GetxController {
 
   final carregando = false.obs;
   final erro = ''.obs;
+
+  final formKey = GlobalKey<FormState>();
+  final emailCtrl = TextEditingController();
+  final senhaCtrl = TextEditingController();
+  final ocultarSenha = true.obs;
+
+  void alterarSenha() => ocultarSenha.toggle();
+  
+    Future<void> entrar() async {
+      if (!formKey.currentState!.validate()) return;
+      await login(emailCtrl.text.trim(), senhaCtrl.text);
+    }
+
+  @override
+  void onClose(){
+    emailCtrl.dispose();
+    senhaCtrl.dispose();
+    super.onClose();
+  }
 
   Future<void> login(String email, String password) async {
     carregando.value = true;
@@ -30,10 +50,15 @@ class LoginCongtroler extends GetxController {
     final perfil = await usuariosService.obterPerfil(response.body!.access);
     if (perfil.isOk) {
       authService.usuario.value = perfil.body;
-      Get.offNamed('/patrimonios');
+      Get.offAllNamed('/patrimonios');
     } else {
+      authService.token.value = null;
       erro.value = 'Erro ao obter perfil do usuário';
     }
+    } catch(e, stackTrace){
+      debugPrint('Erro no login: $e');
+      debugPrint('Stack trace: $stackTrace');
+      erro.value = 'Falha no login: $e';
     }
     finally{
 

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/model/patrimonio.dart';
+import 'package:projeto_patrimonio/model/patrimonio.dart';
 
 void main() {
   test('Deve converter patrimonio JSON para Patrimonio', () {

@@ -1,88 +1,80 @@
 
-import '../model/patrimonio.dart';
+import 'dart:convert';
+
 import 'package:get/get.dart';
 
-class PatrimonioService  extends GetConnect{
-  String baseurl = "http://localhost:8081";
+import '../model/patrimonio.dart';
+import 'auth_service.dart';
 
-  Future<Response<List<Patrimonio>>> listarPatrimonios(){
-    return get('$baseurl/api/patrimonios', decoder: (dados) => decoder(dados));
+class PatrimonioService extends GetConnect {
+  final AuthService authService;
+
+  PatrimonioService(this.authService);
+
+  final String baseurl = 'http://172.31.80.1:8081';
+
+  Map<String, String> get headersAutenticados {
+    final token = authService.token.value?.access;
+
+    return {
+      if (token != null && token.isNotEmpty)
+        'Authorization': 'Bearer $token',
+    };
   }
 
-  Future<Response> buscarPatrimonio(int id){
-      return get('$baseurl/api/patrimonios/${id.toString()}');
-    }
-  
-  Future<Response> cadastrarPatrimonio(Patrimonio patrimonio){ //EXCLUSIVO ADMIN
-    return post('$baseurl/api/patrimonios', patrimonio.toJson());
-  }
-
-  Future<Response> editarPatrimonio(Patrimonio patrimonio, int id){
-    return put('$baseurl/api/patrimonios/${id.toString()}', patrimonio.toJson());
-  }
-
-  Future<Response> deletarPatrimonio(int id){
-    return delete('$baseurl/api/patrimonios/${id.toString()}');
-  }
-
-  Future<Response> atribuirPatrimonio(int patrimonioId, int professorId){
-    return post('$baseurl/api/patrimonios/$patrimonioId/atribuir',
-      {
-        'professor_id': professorId,
-      },
+  Future<Response<List<Patrimonio>>> listarPatrimonios() {
+    return get(
+      '$baseurl/api/patrimonios',
+      headers: headersAutenticados,
+      decoder: (dados) => decoder(dados),
     );
   }
 
-  Future<Response> desatribuirPatrimonio(int patrimonioId) {
+  Future<Response> buscarPatrimonio(int id) {
+    return get(
+      '$baseurl/api/patrimonios/$id',
+      headers: headersAutenticados,
+    );
+  }
+
+  Future<Response> cadastrarPatrimonio(Patrimonio patrimonio) {
     return post(
-      '$baseurl/api/patrimonios/$patrimonioId/desatribuir',
-      {},
+      '$baseurl/api/patrimonios',
+      patrimonio.toJson(),
+      headers: headersAutenticados,
+    );
+  }
+
+  Future<Response> editarPatrimonio(Patrimonio patrimonio, int id) {
+    return put(
+      '$baseurl/api/patrimonios/$id',
+      patrimonio.toJson(),
+      headers: headersAutenticados,
+    );
+  }
+
+  Future<Response> deletarPatrimonio(int id) {
+    return delete(
+      '$baseurl/api/patrimonios/$id',
+      headers: headersAutenticados,
     );
   }
 
   Future<Response<List<Patrimonio>>> meusPatrimonios() {
     return get(
       '$baseurl/api/patrimonios/meus',
+      headers: headersAutenticados,
       decoder: (dados) => decoder(dados),
     );
   }
 
-  Future<Response> obterMetricas() {
-    return get(
-      '$baseurl/api/patrimonios/metricas',
+  List<Patrimonio> decoder(dynamic dados) {
+  final items = dados['items'] as List;
+
+  return items.map((json) {
+    return Patrimonio.fromJson(
+      Map<String, dynamic>.from(json),
     );
-  }
-
-  Future<Response> historicoMovimentacao() {
-    return get(
-      '$baseurl/api/patrimonios/historico',
-    );
-  }
-
-
-
-  //decoder
-List<Patrimonio> decoder(dynamic dados){
-    return (dados as List) .map((json) => Patrimonio.fromJson(json)).toList();
-  }
-
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  }).toList();
+}
+}

@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import '../model/patrimonio.dart';
 import '../service/patrimonio_service.dart';
 import '../service/auth_service.dart';
+import 'package:flutter/foundation.dart';
+
 
 class Patrimoniocontroller extends GetxController {
   final PatrimonioService service;
@@ -64,7 +66,9 @@ class Patrimoniocontroller extends GetxController {
       } else {
         mostrarErro(_mensagemErro(response));
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('Erro ao listar patrimonios: $e');
+      debugPrint('Stack trace: $stackTrace');
       mostrarErro('Erro ao carregar os patrimônios');
     } finally {
       carregando.value = false;

@@ -47,7 +47,10 @@ class Usuario {
       telefone: json['telefone'],
       matricula: json['matricula'],
       departamento: json['departamento'],
-      dataNascimento: json['dataNascimento'] != null ? DateTime.parse(json['dataNascimento']) : null,
+      dataNascimento: json['dataNascimento'] != null &&
+        json['dataNascimento'].toString().trim().isNotEmpty
+    ? DateTime.tryParse(json['dataNascimento'].toString())
+    : null,
       genero: json['genero'],
       cep: json['cep'],
       endereco: json['endereco'],
@@ -73,7 +76,7 @@ class Usuario {
       'genero': genero,
       'cep': cep,
       'endereco': endereco,
-      'cidadeUF': cidadeUF,
+      'cidadeUf': cidadeUF,
       'contatoEmergencia': contatoEmergencia,
       'tipoSanguineo': tipoSanguineo,
       'alergias': alergias,
