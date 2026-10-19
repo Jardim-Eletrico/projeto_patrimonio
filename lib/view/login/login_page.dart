@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/login_controler.dart';
 import '../../core/app_colors.dart';
+import 'package:projeto_patrimonio/widgets/botaoprincipal.dart';
 
 class LoginPage extends GetView<LoginCongtroler> {
   const LoginPage({super.key});
@@ -53,7 +54,7 @@ class LoginPage extends GetView<LoginCongtroler> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Image.asset(
-                      'assets/images/logo.png',
+                      'assets/images/logoflutter.png',
                       height: 80,
                       errorBuilder: (_, _, _) =>
                           const Icon(Icons.inventory_2_outlined, size: 80),
@@ -125,36 +126,18 @@ class LoginPage extends GetView<LoginCongtroler> {
                             ),
                           )),
 
-                    Obx(() => SizedBox(
-                          height: 54,
-                          child: FilledButton(
-                            style: FilledButton.styleFrom(
-                              backgroundColor: AppColors.azul,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            onPressed: controller.carregando.value
-                                ? null
-                                : controller.entrar,
-                            child: controller.carregando.value
-                                ? const SizedBox(
-                                    height: 22,
-                                    width: 22,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const Text(
-                                    'Entrar',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+
+
+                        Obx(
+                          () => BotaoPrincipal(
+                            texto: 'Entrar',
+                            carregando: controller.carregando.value,
+                            onPressed: controller.entrar,
                           ),
-                        )),
+                        ),
+
+                        const SizedBox(height: 16),
+
                     const SizedBox(height: 24),
 
                     SizedBox(

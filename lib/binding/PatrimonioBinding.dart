@@ -10,15 +10,24 @@ import '../controller/patrimoniocontroller.dart';
 import '../service/patrimonio_service.dart';
 import '../service/auth_service.dart';
 
+
+import 'package:get/get.dart';
+
+import '../controller/patrimoniocontroller.dart';
+import '../service/auth_service.dart';
+import '../service/patrimonio_service.dart';
+
 class PatrimonioBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<PatrimonioService>(
-      () => PatrimonioService(Get.find<AuthService>()),
-    );
-
     Get.lazyPut<AuthService>(
       () => AuthService(),
+    );
+
+    Get.lazyPut<PatrimonioService>(
+      () => PatrimonioService(
+        Get.find<AuthService>(),
+      ),
     );
 
     Get.lazyPut<Patrimoniocontroller>(
@@ -29,5 +38,6 @@ class PatrimonioBinding extends Bindings {
     );
   }
 }
+
 
 

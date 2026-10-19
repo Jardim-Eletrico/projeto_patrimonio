@@ -94,27 +94,47 @@ class Patrimoniocontroller extends GetxController {
     }
   }
 
-  Future<bool> cadastrarPatrimonio(Patrimonio novo) async {
-    if (_semPermissao()) return false;
+  
+Future<bool> cadastrarPatrimonio(Patrimonio novo) async {
+  if (_semPermissao()) return false;
 
-    carregando.value = true;
-    try {
-      final response = await service.cadastrarPatrimonio(novo);
+  carregando.value = true;
 
-      if (response.isOk) {
-        await listarPatrimonios();
-        Get.snackbar('Sucesso', 'Patrimônio cadastrado');
-        return true;
-      }
-      Get.snackbar('Erro', _mensagemErro(response));
-      return false;
-    } catch (e) {
-      Get.snackbar('Erro', 'Falha ao cadastrar o patrimônio');
-      return false;
-    } finally {
-      carregando.value = false;
+  try {
+    final response = await service.cadastrarPatrimonio(novo);
+
+    if (response.isOk) {
+      await listarPatrimonios();
+      Get.snackbar('Sucesso', 'Patrimônio cadastrado');
+      return true;
     }
+
+    debugPrint('Status: ${response.statusCode}');
+    debugPrint('Resposta da API: ${response.bodyString}');
+
+    erro.value = response.bodyString ?? _mensagemErro(response);
+
+    Get.snackbar(
+      'Erro ${response.statusCode}',
+      erro.value,
+    );
+
+    return false;
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao cadastrar patrimônio: $e');
+    debugPrint('Stack trace: $stackTrace');
+
+    erro.value = 'Falha ao cadastrar o patrimônio.';
+
+    Get.snackbar('Erro', erro.value);
+
+    return false;
+  } finally {
+    carregando.value = false;
   }
+}
+
+
 
   Future<bool> editarPatrimonio(Patrimonio editado) async{
     if(_semPermissao()) return false;
