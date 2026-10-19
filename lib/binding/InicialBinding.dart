@@ -1,9 +1,14 @@
 import 'package:get/get.dart';
 import '../service/auth_service.dart';
+import '../service/usuarios_service.dart';
+import '../service/patrimonio_service.dart';
 
-class InicialBinding extends Bindings {
+class InitialBinding extends Bindings {
   @override
   void dependencies() {
     Get.put(AuthService(), permanent: true);
+
+    Get.lazyPut(() => UsuariosService(), fenix: true);
+    Get.lazyPut(() => PatrimonioService(), fenix: true);
   }
 }
