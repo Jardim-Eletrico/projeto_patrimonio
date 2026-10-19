@@ -13,11 +13,38 @@ class Patrimoniocontroller extends GetxController {
   final carregando = false.obs;
   final erro = ''.obs;
 
-  void mostrarErro([String? mensagem]){
-    erro.value = mensagem ?? "Ocorreu um erro inesperado";
+  bool get podeEditar => authService.ehAdmin;
+
+  bool _semPermissao() {
+    if (podeEditar) return false;
+
+    Get.snackbar(
+      'Acesso negado',
+      'Tu não tens permissão para realizar esta ação',
+    );
+    return true;
   }
 
-  bool get podeEditar => authService.ehAdmin;
+  void mostrarErro([String? mensagem]) {
+    erro.value = mensagem ?? 'Ocorreu um erro inesperado';
+  }
+
+  String _mensagemErro(Response response) {
+    switch (response.statusCode) {
+      case 400:
+        return 'Dados inválidos';
+      case 401:
+        return 'Sessão expirada, faça login novamente';
+      case 403:
+        return 'Você não tem permissão para esta ação';
+      case 404:
+        return 'Patrimônio não encontrado';
+      case null:
+        return 'Sem conexão com o servidor';
+      default:
+        return 'Erro inesperado (${response.statusCode})';
+    }
+  }
 
   @override
   void onInit() {
@@ -31,48 +58,104 @@ class Patrimoniocontroller extends GetxController {
 
     try {
       final response = await service.listarPatrimonios();
-      
+
       if (response.isOk) {
         patrimonios.assignAll(response.body ?? []);
       } else {
-        mostrarErro();
+        mostrarErro(_mensagemErro(response));
       }
-    } catch(e){
-      mostrarErro('Erro ao carregar os patrimonios');
+    } catch (e) {
+      mostrarErro('Erro ao carregar os patrimônios');
     } finally {
       carregando.value = false;
     }
-
-  @override
-  void onInit(){
-    super.onInit();
-    listarPatrimonios();
   }
 
-  Future<void> buscarPatrimonio(int id) async{
+  Future<void> buscarPatrimonio(int id) async {
+    carregando.value = true;
+    erro.value = '';
+
+    try {
+      final response = await service.buscarPatrimonio(id);
+
+      if (response.isOk && response.body != null) {
+        patrimonio.value = response.body;
+      } else {
+        mostrarErro(_mensagemErro(response));
+      }
+    } catch (e) {
+      mostrarErro('Erro ao buscar o patrimônio');
+    } finally {
+      carregando.value = false;
+    }
+  }
+
+  Future<bool> cadastrarPatrimonio(Patrimonio novo) async {
+    if (_semPermissao()) return false;
+
+    carregando.value = true;
+    try {
+      final response = await service.cadastrarPatrimonio(novo);
+
+      if (response.isOk) {
+        await listarPatrimonios();
+        Get.snackbar('Sucesso', 'Patrimônio cadastrado');
+        return true;
+      }
+      Get.snackbar('Erro', _mensagemErro(response));
+      return false;
+    } catch (e) {
+      Get.snackbar('Erro', 'Falha ao cadastrar o patrimônio');
+      return false;
+    } finally {
+      carregando.value = false;
+    }
+  }
+
+  Future<bool> editarPatrimonio(Patrimonio editado) async{
+    if(_semPermissao()) return false;
+    
+    final id = editado.id;
+    if (id == null) {
+      Get.snackbar('Erro:', 'Patrimônio sem identificador');
+      return false;
+    }
     carregando.value = true;
 
     try{
-    final response = await service.buscarPatrimonio(id);
+      final response = await service.editarPatrimonio(editado, id);
 
-    if (response.isOk && response.body != null){
+      if (response.isOk) {
+        await listarPatrimonios();
+        Get.snackbar("Sucesso:", "Patrimônio atualizado");
+        return true;
+      }
 
-      patrimonio.value = response.body;
+      Get.snackbar('Erro:', _mensagemErro(response));
+      return false;
+    }finally{
+      carregando.value = false;
     }
   }
-  finally{
-    carregando.value = false;
-  }
-  }
 
-  Future<void> cadastroPatrimonio(Patrimonio patrimonio) async{
-    final loginControler = Get.find<LoginCongtroler>();
-
-    if (loginControler.usuario.value?.role != 'admin'){
-      Get.snackbar("Aceso Negado:", "Você não tem permissão para acessar essa função");
-      return;
-    }
-    carregando.value = true;
+  Future<bool> deletarPatrimonio(int id) async{
+    if(_semPermissao()) return false;
     
+    carregando.value = true;
+     try{
+      final response = await service.deletarPatrimonio(id);
+
+      if (response.isOk) {
+        await listarPatrimonios();
+        Get.snackbar("Sucesso:", "Patrimônio deletado");
+        return true;
+      }
+
+      Get.snackbar('Erro:', _mensagemErro(response));
+      return false;
+    }finally{
+      carregando.value = false;
+    }
+
   }
 }
