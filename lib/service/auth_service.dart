@@ -122,7 +122,7 @@ Future<Response> resetPassword(
     {
       "email": email,
       "code": code,
-      "new_password": newPassword,
+      "newPassword": newPassword,
     },
   );
 }
