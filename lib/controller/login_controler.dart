@@ -1,14 +1,37 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:projeto_patrimonio/model/usuario.dart';
 import '../service/auth_service.dart';
+import '../service/usuarios_service.dart';
+
+
 
 class LoginCongtroler extends GetxController {
-  final AuthService authService = AuthService();
+  final AuthService authService;
+  final UsuariosService usuariosService;
+  LoginCongtroler(this.authService, this.usuariosService);
 
   final carregando = false.obs;
   final erro = ''.obs;
 
-  final usuario = Rxn<Usuario>();
+  final formKey = GlobalKey<FormState>();
+  final emailCtrl = TextEditingController();
+  final senhaCtrl = TextEditingController();
+  final ocultarSenha = true.obs;
+
+  void alterarSenha() => ocultarSenha.toggle();
+  
+    Future<void> entrar() async {
+      if (!formKey.currentState!.validate()) return;
+      await login(emailCtrl.text.trim(), senhaCtrl.text);
+    }
+
+  @override
+  void onClose(){
+    emailCtrl.dispose();
+    senhaCtrl.dispose();
+    super.onClose();
+  }
 
   Future<void> login(String email, String password) async {
     carregando.value = true;
@@ -18,19 +41,121 @@ class LoginCongtroler extends GetxController {
 
     final response = await authService.login(email, password);
 
-    if (response.isOk) {
-      final token = response.body!;
-
-      print(token.access);
-      print(token.refresh);
-
-    } else {
-      erro.value = "Login ou senha inválidos";
+    if (!response.isOk) {
+      erro.value = response.statusCode == null ? 'Sem conexão' : 'Login ou senha inválidos';
+      return;
     }
+
+    authService.token.value = response.body;
+    final perfil = await usuariosService.obterPerfil(response.body!.access);
+    if (perfil.isOk) {
+      authService.usuario.value = perfil.body;
+      Get.offAllNamed('/patrimonios');
+    } else {
+      authService.token.value = null;
+      erro.value = 'Erro ao obter perfil do usuário';
+    }
+    } catch(e, stackTrace){
+      debugPrint('Erro no login: $e');
+      debugPrint('Stack trace: $stackTrace');
+      erro.value = 'Falha no login: $e';
     }
     finally{
 
     carregando.value = false;
+    }
+  }
+
+  Future<bool> cadastrarAdm(Usuario usuario, String senha) async {
+  if (authService.usuario.value?.role != 'admin') {
+    Get.snackbar(
+      'Acesso negado',
+      'Apenas administradores podem cadastrar outros administradores.',
+    );
+    return false;
+  }
+
+  carregando.value = true;
+
+  try {
+    final response = await authService.cadastrarCoordenador(
+      usuario,
+      senha,
+    );
+
+    debugPrint(
+      'Cadastro de administrador: HTTP ${response.statusCode}',
+    );
+    debugPrint('Resposta: ${response.body}');
+
+    if (response.isOk) {
+      Get.snackbar(
+        'Sucesso',
+        'Administrador cadastrado com sucesso.',
+      );
+      return true;
+    }
+
+    Get.snackbar(
+      'Erro',
+      'Não foi possível cadastrar o administrador.',
+    );
+    return false;
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao cadastrar administrador: $e');
+    debugPrintStack(stackTrace: stackTrace);
+
+    Get.snackbar(
+      'Erro',
+      'Falha ao conectar com a API.',
+    );
+    return false;
+  } finally {
+    carregando.value = false;
+  }
+}
+
+//====================================================
+  Future<void> esqueceuSenha(String email) async{
+    carregando.value = true;
+
+    try{
+      final response = await authService.forgotPassword(email);
+
+      if (response.isOk){
+
+      }
+
+    }finally{
+      carregando.value = false;
+    }
+  }
+
+  Future<void> verificarCodigo(String email, String code) async{
+    carregando.value = true;
+
+    try{
+      final response = await authService.verifyCode(email, code);
+
+      if (response.isOk){
+
+      }
+    }finally{
+      carregando.value = false;
+    }
+  }
+
+  Future<void> resetPassword(String email, String code, String newPassword) async{
+    carregando.value = true;
+
+    try{
+      final response = await authService.resetPassword(email, code, newPassword);
+
+      if (response.isOk){
+
+      }
+    }finally{
+      carregando.value = false;
     }
   }
 }

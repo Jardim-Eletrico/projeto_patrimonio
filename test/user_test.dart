@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/model/usuario.dart';
+import 'package:projeto_patrimonio/model/usuario.dart';
 
 void main() {
   test('Deve converter professor JSON para Usuario', () {

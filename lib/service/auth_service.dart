@@ -1,29 +1,55 @@
 import '../model/token.dart';
 import '../model/usuario.dart';
 import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthService extends GetConnect {
+  final token = Rxn<Token>();
+  final usuario = Rxn<Usuario>();
 
-  String baseurl = "http://localhost:8081";
+  String? get accessToken => token.value?.access;
+
+  bool get ehAdmin => usuario.value?.role == 'admin';
+
+  String baseurl = "http://172.31.80.1:8081";
   Future<Response<Token>> login(String email, String password) async {
-    
-    final response = await post(
-      "$baseurl/api/auth/login",
-      {
+  final response = await post(
+    "$baseurl/api/auth/login",
+    {
+      'email': email,
+      'password': password,
+    },
+  );
 
-        'email':email,
-        'password': password,
-      });
+  debugPrint('Status do login: ${response.statusCode}');
 
-      if(response.isOk){
-        return Response<Token>(statusCode: response.statusCode, body: Token.fromJson(response.body));
-      }
+  if (response.isOk && response.body != null) {
+    final dados = Token.fromJson(
+      Map<String, dynamic>.from(response.body),
+    );
 
-      return Response<Token>(
-        statusCode: response.statusCode,
-        statusText: response.statusText,
-        );
+    token.value = dados;
+
+    final resposta = response.body;
+
+    if (resposta is Map && resposta['user'] is Map) {
+      usuario.value = Usuario.fromJson(
+        Map<String, dynamic>.from(resposta['user']),
+      );
+    }
+
+    return Response<Token>(
+      statusCode: response.statusCode,
+      statusText: response.statusText,
+      body: dados,
+    );
   }
+
+  return Response<Token>(
+    statusCode: response.statusCode,
+    statusText: response.statusText,
+  );
+}
 
   Future<Token?> refreshToken(String refreshToken) async {
   final response = await post(
@@ -40,32 +66,40 @@ class AuthService extends GetConnect {
   return null;
 }
 
-Future<Usuario?> register(Map<String, dynamic> dados) async {
-  final response = await post(
-    "$baseurl/api/auth/register",
-    dados,
-  );
 
-  if (response.isOk) {
-    return Usuario.fromJson(response.body);
-  }
+  Future<bool> logout(String accessToken) async {
+  try {
+    final response = await post(
+      '$baseurl/api/auth/logout',
+      {},
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
 
-  return null;
-}
-
-  Future<bool> logout(String acessToken) async{
-    final response = await post("$baseurl/api/auth/logout", {}, headers: {"Authorization": "Bearer $acessToken"},);
     return response.isOk;
+  } catch (e) {
+    debugPrint('Erro ao realizar logout na API: $e');
+    return false;
+  } finally {
+    token.value = null;
+    usuario.value = null;
   }
+}
 //=======================================//============================================
 
-  Future<Response> forgotPassword(String email) async {
-  return await post(
+Future<Response> forgotPassword(String email) async {
+  final response = await post(
     "$baseurl/api/auth/forgot-password",
     {
       "email": email,
     },
   );
+
+  print('Status: ${response.statusCode}');
+  print('Resposta: ${response.body}');
+
+  return response;
 }
 
 Future<Response> verifyCode(String email, String code) async {
@@ -88,7 +122,25 @@ Future<Response> resetPassword(
     {
       "email": email,
       "code": code,
-      "new_password": newPassword,
+      "newPassword": newPassword,
+    },
+  );
+}
+//============================================================
+Future<Response> cadastrarCoordenador(
+  Usuario usuario,
+  String senha,
+) {
+  return post(
+    '$baseurl/api/auth/register',
+    {
+      'nome': usuario.nome,
+      'email': usuario.email,
+      'password': senha,
+      'cpf': usuario.cpf,
+      'telefone': usuario.telefone,
+      'departamento': usuario.departamento,
+      'role': 'admin',
     },
   );
 }
