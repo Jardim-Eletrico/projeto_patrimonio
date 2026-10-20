@@ -10,6 +10,7 @@ import '../view/users/gestao_professores.dart';
 import '../view/login/login_page.dart';
 import '../view/patrimonios/patrimonios_page.dart';
 import '../view/login/esqueci_senha_page.dart';
+import '../view/login/cadastrar_adm_page.dart';
 
 import 'app_routes.dart';
 
@@ -48,6 +49,12 @@ class AppPages {
       GetPage(
         name: AppRoutes.esqueciSenha,
         page: () => const EsqueciSenhaPage()),
-        
+
+      GetPage(
+        name: AppRoutes.cadastrarAdministrador,
+        page: () => const CadastroAdministradorPage(),
+        binding: LoginBinding(),
+        ),
+
   ];
 }

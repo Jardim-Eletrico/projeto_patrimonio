@@ -67,10 +67,25 @@ class AuthService extends GetConnect {
 }
 
 
-  Future<bool> logout(String acessToken) async{
-    final response = await post("$baseurl/api/auth/logout", {}, headers: {"Authorization": "Bearer $acessToken"},);
+  Future<bool> logout(String accessToken) async {
+  try {
+    final response = await post(
+      '$baseurl/api/auth/logout',
+      {},
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
     return response.isOk;
+  } catch (e) {
+    debugPrint('Erro ao realizar logout na API: $e');
+    return false;
+  } finally {
+    token.value = null;
+    usuario.value = null;
   }
+}
 //=======================================//============================================
 
 Future<Response> forgotPassword(String email) async {
@@ -112,9 +127,21 @@ Future<Response> resetPassword(
   );
 }
 //============================================================
-Future<Response> cadastrarCoordenador(Usuario usuario){
-    return post(
-      '$baseurl/api/auth/register', usuario.toJson(),
-    );
-  }
+Future<Response> cadastrarCoordenador(
+  Usuario usuario,
+  String senha,
+) {
+  return post(
+    '$baseurl/api/auth/register',
+    {
+      'nome': usuario.nome,
+      'email': usuario.email,
+      'password': senha,
+      'cpf': usuario.cpf,
+      'telefone': usuario.telefone,
+      'departamento': usuario.departamento,
+      'role': 'admin',
+    },
+  );
+}
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../service/auth_service.dart';
+import '../routes/app_routes.dart';
 
 class MenuLateral extends GetView<AuthService> {
   const MenuLateral({super.key});
@@ -11,6 +12,19 @@ class MenuLateral extends GetView<AuthService> {
     Navigator.of(context).pop();
     Get.toNamed(rota);
   }
+
+  Future<void> sair() async {
+  final accessToken = controller.accessToken;
+
+  if (accessToken != null && accessToken.isNotEmpty) {
+    await controller.logout(accessToken);
+  } else {
+    controller.token.value = null;
+    controller.usuario.value = null;
+  }
+
+  Get.offAllNamed(AppRoutes.login);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +57,8 @@ class MenuLateral extends GetView<AuthService> {
               onTap: () => navegar(context, '/perfil'),
             ),
 
+            
+
             // Opções exclusivas do administrador
             if (ehAdmin) ...[
               const Divider(),
@@ -68,6 +84,17 @@ class MenuLateral extends GetView<AuthService> {
                 title: const Text('Gestão de Usuários'),
                 onTap: () => navegar(context, '/usuarios'),
               ),
+
+              ListTile(
+                leading: const Icon(
+                  Icons.admin_panel_settings_outlined,
+                ),
+                title: const Text('Cadastrar administrador'),
+                onTap: () => navegar(
+                  context,
+                  AppRoutes.cadastrarAdministrador,
+                ),
+              ),
             ],
 
             const Spacer(),
@@ -76,9 +103,7 @@ class MenuLateral extends GetView<AuthService> {
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Sair'),
-              onTap: () {
-                // Chame aqui o método de logout do seu AuthService.
-              },
+              onTap: sair,
             ),
           ],
         ),

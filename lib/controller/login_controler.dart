@@ -66,22 +66,54 @@ class LoginCongtroler extends GetxController {
     }
   }
 
-  Future<void> cadastrarAdm(Usuario usuario) async {
-    if (authService.usuario.value?.role != 'admin'){
-      return;
-    }
-
-    carregando.value = true;
-    try {
-      final response = await authService.cadastrarCoordenador(usuario);
-
-      if (response.isOk) {
-
-      }
-    } finally {
-      carregando.value = false;
-    }
+  Future<bool> cadastrarAdm(Usuario usuario, String senha) async {
+  if (authService.usuario.value?.role != 'admin') {
+    Get.snackbar(
+      'Acesso negado',
+      'Apenas administradores podem cadastrar outros administradores.',
+    );
+    return false;
   }
+
+  carregando.value = true;
+
+  try {
+    final response = await authService.cadastrarCoordenador(
+      usuario,
+      senha,
+    );
+
+    debugPrint(
+      'Cadastro de administrador: HTTP ${response.statusCode}',
+    );
+    debugPrint('Resposta: ${response.body}');
+
+    if (response.isOk) {
+      Get.snackbar(
+        'Sucesso',
+        'Administrador cadastrado com sucesso.',
+      );
+      return true;
+    }
+
+    Get.snackbar(
+      'Erro',
+      'Não foi possível cadastrar o administrador.',
+    );
+    return false;
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao cadastrar administrador: $e');
+    debugPrintStack(stackTrace: stackTrace);
+
+    Get.snackbar(
+      'Erro',
+      'Falha ao conectar com a API.',
+    );
+    return false;
+  } finally {
+    carregando.value = false;
+  }
+}
 
 //====================================================
   Future<void> esqueceuSenha(String email) async{
