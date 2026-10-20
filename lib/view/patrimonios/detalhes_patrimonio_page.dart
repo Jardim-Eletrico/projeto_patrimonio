@@ -1,4 +1,5 @@
 
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:projeto_patrimonio/controller/patrimoniocontroller.dart';
@@ -6,6 +7,9 @@ import 'package:projeto_patrimonio/model/patrimonio.dart';
 import 'package:projeto_patrimonio/widgets/campo_texto.dart';
 import 'package:projeto_patrimonio/widgets/campo_selecao.dart';
 import 'package:projeto_patrimonio/widgets/botaoprincipal.dart';
+
+import '../../controller/usuario_controler.dart';
+import 'package:projeto_patrimonio/model/usuario.dart';
 
 class DetalhesPatrimonioPage extends StatefulWidget {
   const DetalhesPatrimonioPage({super.key});
@@ -104,6 +108,147 @@ class _DetalhesPatrimonioPageState
     super.dispose();
   }
 
+  Future<void> _atribuirProfessor() async {
+  if (!controller.podeEditar || item.id == null) {
+    Get.snackbar(
+      'Erro',
+      'Não foi possível identificar o patrimônio ou você não tem permissão.',
+    );
+    return;
+  }
+
+  try {
+    final usuarioController = Get.find<UsuarioControler>();
+
+    await usuarioController.listarProfessores();
+
+    if (!mounted) return;
+
+    final professores = usuarioController.usuarios
+        .where(
+          (usuario) =>
+              usuario.role.toLowerCase() == 'professor' &&
+              usuario.id != null,
+        )
+        .toList();
+
+    if (professores.isEmpty) {
+      Get.snackbar(
+        'Aviso',
+        'Nenhum professor encontrado. Verifique o carregamento da lista.',
+      );
+      return;
+    }
+
+    int? professorIdSelecionado;
+
+    final confirmou = await Get.dialog<bool>(
+      StatefulBuilder(
+        builder: (context, setDialogState) {
+          return AlertDialog(
+            title: const Text('Atribuir patrimônio'),
+            content: DropdownButtonFormField<int>(
+              decoration: const InputDecoration(
+                labelText: 'Professor',
+                border: OutlineInputBorder(),
+              ),
+              hint: const Text('Selecione um professor'),
+              items: professores.map((professor) {
+                return DropdownMenuItem<int>(
+                  value: professor.id!,
+                  child: Text(professor.nome),
+                );
+              }).toList(),
+              onChanged: (valor) {
+                setDialogState(() {
+                  professorIdSelecionado = valor;
+                });
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Get.back(result: false),
+                child: const Text('Cancelar'),
+              ),
+              FilledButton(
+                onPressed: professorIdSelecionado == null
+                    ? null
+                    : () => Get.back(result: true),
+                child: const Text('Atribuir'),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    if (confirmou != true || professorIdSelecionado == null) {
+      return;
+    }
+
+    final sucesso = await controller.atribuirPatrimonio(
+      item.id!,
+      professorIdSelecionado!,
+    );
+
+    if (!mounted) return;
+
+    if (sucesso) {
+      Get.snackbar(
+        'Sucesso',
+        'Patrimônio atribuído ao professor.',
+      );
+    }
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao atribuir professor: $e');
+    debugPrintStack(stackTrace: stackTrace);
+
+    if (mounted) {
+      Get.snackbar(
+        'Erro',
+        'Não foi possível abrir a atribuição. Verifique o terminal.',
+      );
+    }
+  }
+}
+
+Future<void> _desatribuirProfessor() async {
+  if (!controller.podeEditar || item.id == null) return;
+
+  final confirmar = await Get.dialog<bool>(
+    AlertDialog(
+      title: const Text('Desatribuir professor'),
+      content: Text(
+        'Deseja remover a atribuição do patrimônio "${item.nome}"?',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Get.back(result: false),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: () => Get.back(result: true),
+          child: const Text('Desatribuir'),
+        ),
+      ],
+    ),
+  );
+
+  if (confirmar != true) return;
+
+  final sucesso = await controller.desatribuirPatrimonio(item.id!);
+
+  if (!mounted || !sucesso) return;
+
+  setState(() {
+    item.professorId = null;
+  });
+
+  Get.snackbar(
+    'Sucesso',
+    'Professor desatribuído com sucesso.',
+  );
+}
   @override
   Widget build(BuildContext context) {
     final editavel = modoEdicao && controller.podeEditar;
@@ -215,6 +360,30 @@ class _DetalhesPatrimonioPageState
                     setState(() => modoEdicao = true);
                   },
                 ),
+
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 54,
+                  child: OutlinedButton.icon(
+                    onPressed: _atribuirProfessor,
+                    icon: const Icon(Icons.person_add_alt_1),
+                    label: const Text('Atribuir professor'),
+                  ),
+                ),
+
+                if (item.professorId != null) ...[
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 54,
+                    child: OutlinedButton.icon(
+                    onPressed: _desatribuirProfessor,
+                    icon: const Icon(Icons.person_remove_alt_1),
+                    label: const Text("Desatribuir professor"),)
+                  )
+                ],
+
                 const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,

@@ -233,4 +233,42 @@ Future<bool> cadastrarPatrimonio(Patrimonio novo) async {
     carregando.value = false;
   }
 }
+
+Future<bool> desatribuirPatrimonio(int patrimonioId) async {
+  if (!podeEditar) return false;
+
+  carregando.value = true;
+  erro.value = '';
+
+  try {
+    final response =
+        await service.desatribuirPatrimonio(patrimonioId);
+
+    if (response.isOk) {
+      await listarPatrimonios();
+
+      Get.snackbar(
+        'Sucesso',
+        'Patrimônio desatribuído com sucesso.',
+      );
+
+      return true;
+    }
+
+    erro.value = _mensagemErro(response);
+
+    Get.snackbar('Erro', erro.value);
+    return false;
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao desatribuir patrimônio: $e');
+    debugPrintStack(stackTrace: stackTrace);
+
+    erro.value = 'Não foi possível desatribuir o patrimônio.';
+    Get.snackbar('Erro', erro.value);
+
+    return false;
+  } finally {
+    carregando.value = false;
+  }
+}
 }

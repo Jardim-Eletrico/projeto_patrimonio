@@ -81,6 +81,14 @@ class PatrimonioService extends GetConnect {
   );
 }
 
+  Future<Response> desatribuirPatrimonio(int patrimonioId) {
+    return post(
+      '$baseurl/api/admin/patrimonios/$patrimonioId/desatribuir',
+      {},
+      headers: headersAutenticados,
+    );
+  }
+
   List<Patrimonio> decoder(dynamic dados) {
   final items = dados['items'] as List;
 
