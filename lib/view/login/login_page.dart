@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:projeto_patrimonio/routes/app_routes.dart';
 import '../../controller/login_controler.dart';
 import '../../core/app_colors.dart';
 import 'package:projeto_patrimonio/widgets/botaoprincipal.dart';
@@ -151,7 +152,7 @@ class LoginPage extends GetView<LoginCongtroler> {
                           ),
                         ),
                         onPressed: () {
-                          // Get.toNamed(AppRoutes.esqueciSenha);
+                          Get.toNamed(AppRoutes.esqueciSenha);
                         },
                         child: const Text(
                           'Esqueci minha senha',
@@ -163,22 +164,6 @@ class LoginPage extends GetView<LoginCongtroler> {
                       ),
                     ),
                     const SizedBox(height: 24),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('Não tem uma conta? '),
-                        GestureDetector(
-                          onTap: () {
-                            // Get.toNamed(AppRoutes.cadastro);
-                          },
-                          child: const Text(
-                            'Crie uma',
-                            style: TextStyle(color: AppColors.ciano),
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),

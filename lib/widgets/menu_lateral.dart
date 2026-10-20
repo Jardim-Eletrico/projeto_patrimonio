@@ -2,88 +2,84 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class MenuLateral extends StatelessWidget {
+import '../service/auth_service.dart';
+
+class MenuLateral extends GetView<AuthService> {
   const MenuLateral({super.key});
 
-  void _navegar(BuildContext context, String rota) {
+  void navegar(BuildContext context, String rota) {
     Navigator.of(context).pop();
     Get.toNamed(rota);
   }
 
   @override
   Widget build(BuildContext context) {
-    const cinzaEscuro = Color(0xFF747474);
+    final ehAdmin = controller.ehAdmin;
 
     return Drawer(
       child: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 24),
+            DrawerHeader(
+              child: Center(
+                child: Image.asset(
+                  'assets/images/logoflutter.png',
+                  height: 80,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/images/logoflutter.png',
-                    width: 48,
-                    height: 48,
-                    fit: BoxFit.contain,
+            // Opções disponíveis para todos
+            ListTile(
+              leading: const Icon(Icons.inventory_2_outlined),
+              title: const Text('Patrimônios'),
+              onTap: () => navegar(context, '/patrimonios'),
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.person_outline),
+              title: const Text('Meu perfil'),
+              onTap: () => navegar(context, '/perfil'),
+            ),
+
+            // Opções exclusivas do administrador
+            if (ehAdmin) ...[
+              const Divider(),
+
+              const ListTile(
+                title: Text(
+                  'PAINEL DE GESTÃO',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
                   ),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Text(
-                      'Menu',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
 
-            const SizedBox(height: 24),
-            const Divider(),
-
-            ListTile(
-              leading: const Icon(
-                Icons.person_outline,
-                color: cinzaEscuro,
+              ListTile(
+                leading: const Icon(Icons.school_outlined),
+                title: const Text('Gestão de Professores'),
+                onTap: () => navegar(context, '/professores'),
               ),
-              title: const Text('Perfil'),
-              onTap: () => _navegar(context, '/perfil'),
-            ),
 
-            ListTile(
-              leading: const Icon(
-                Icons.school_outlined,
-                color: cinzaEscuro,
+              ListTile(
+                leading: const Icon(Icons.people_outline),
+                title: const Text('Gestão de Usuários'),
+                onTap: () => navegar(context, '/usuarios'),
               ),
-              title: const Text('Professores'),
-              onTap: () => _navegar(context, '/professores'),
-            ),
-
-            ListTile(
-              leading: const Icon(
-                Icons.manage_accounts_outlined,
-                color: cinzaEscuro,
-              ),
-              title: const Text('Usuários'),
-              onTap: () => _navegar(context, '/usuarios'),
-            ),
+            ],
 
             const Spacer(),
             const Divider(),
 
             ListTile(
-              leading: const Icon(Icons.close),
-              title: const Text('Fechar menu'),
-              onTap: () => Navigator.of(context).pop(),
+              leading: const Icon(Icons.logout),
+              title: const Text('Sair'),
+              onTap: () {
+                // Chame aqui o método de logout do seu AuthService.
+              },
             ),
-
-            const SizedBox(height: 12),
           ],
         ),
       ),

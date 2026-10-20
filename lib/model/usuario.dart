@@ -15,7 +15,7 @@ class Usuario {
   String? contatoEmergencia;
   String? tipoSanguineo;
   String? alergias;
-  int totalPatrimonios;
+  int? totalPatrimonios;
   
   Usuario({
     this.id,
@@ -34,33 +34,35 @@ class Usuario {
     this.contatoEmergencia,
     this.tipoSanguineo,
     this.alergias,
-    required this.totalPatrimonios,
+    this.totalPatrimonios,
   });
 
   factory Usuario.fromJson(Map<String, dynamic> json) {
-    return Usuario(
-      id: json['id'],
-      email: json['email'],
-      nome: json['nome'],
-      role: json['role'],
-      cpf: json['cpf'],
-      telefone: json['telefone'],
-      matricula: json['matricula'],
-      departamento: json['departamento'],
-      dataNascimento: json['dataNascimento'] != null &&
-        json['dataNascimento'].toString().trim().isNotEmpty
-    ? DateTime.tryParse(json['dataNascimento'].toString())
-    : null,
-      genero: json['genero'],
-      cep: json['cep'],
-      endereco: json['endereco'],
-      cidadeUF: json['cidadeUF'],
-      contatoEmergencia: json['contatoEmergencia'],
-      tipoSanguineo: json['tipoSanguineo'],
-      alergias: json['alergias'],
-      totalPatrimonios: json['totalPatrimonios'],
-    );
-  }
+  return Usuario(
+    id: json['id'],
+    email: json['email'] ?? '',
+    nome: json['nome'] ?? '',
+    role: json['role'] ?? '',
+    cpf: json['cpf'] ?? '',
+    telefone: json['telefone'] ?? '',
+    matricula: json['matricula'] ?? '',
+    departamento: json['departamento'] ?? '',
+    dataNascimento: json['dataNascimento'] != null &&
+            json['dataNascimento'].toString().trim().isNotEmpty
+        ? DateTime.tryParse(json['dataNascimento'].toString())
+        : null,
+    genero: json['genero'],
+    cep: json['cep'],
+    endereco: json['endereco'],
+    cidadeUF: json['cidadeUF'] ?? json['cidadeUf'],
+    contatoEmergencia: json['contatoEmergencia'],
+    tipoSanguineo: json['tipoSanguineo'],
+    alergias: json['alergias'],
+    totalPatrimonios: json['totalPatrimonios'] != null
+        ? (json['totalPatrimonios'] as num).toInt()
+        : null,
+  );
+}
 
   Map<String, dynamic> toJson() {
     return {

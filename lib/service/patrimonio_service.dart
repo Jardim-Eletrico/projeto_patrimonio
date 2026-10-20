@@ -68,6 +68,19 @@ class PatrimonioService extends GetConnect {
     );
   }
 
+  Future<Response> atribuirPatrimonio(
+  int patrimonioId,
+  int professorId,
+) {
+  return post(
+    '$baseurl/api/admin/patrimonios/$patrimonioId/atribuir',
+    {
+      'professorId': professorId,
+    },
+    headers: headersAutenticados,
+  );
+}
+
   List<Patrimonio> decoder(dynamic dados) {
   final items = dados['items'] as List;
 

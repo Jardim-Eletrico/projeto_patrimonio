@@ -7,32 +7,49 @@ class AuthService extends GetConnect {
   final token = Rxn<Token>();
   final usuario = Rxn<Usuario>();
 
+  String? get accessToken => token.value?.access;
+
   bool get ehAdmin => usuario.value?.role == 'admin';
 
   String baseurl = "http://172.31.80.1:8081";
   Future<Response<Token>> login(String email, String password) async {
-    
-    final response = await post(
-      
-      "$baseurl/api/auth/login",
-      {
+  final response = await post(
+    "$baseurl/api/auth/login",
+    {
+      'email': email,
+      'password': password,
+    },
+  );
 
-        'email':email,
-        'password': password,
-      });
+  debugPrint('Status do login: ${response.statusCode}');
 
-      debugPrint('Status: ${response.statusCode}');
-      debugPrint('Body: ${response.body}');
+  if (response.isOk && response.body != null) {
+    final dados = Token.fromJson(
+      Map<String, dynamic>.from(response.body),
+    );
 
-      if(response.isOk){
-        return Response<Token>(statusCode: response.statusCode, body: Token.fromJson(response.body));
-      }
+    token.value = dados;
 
-      return Response<Token>(
-        statusCode: response.statusCode,
-        statusText: response.statusText,
-        );
+    final resposta = response.body;
+
+    if (resposta is Map && resposta['user'] is Map) {
+      usuario.value = Usuario.fromJson(
+        Map<String, dynamic>.from(resposta['user']),
+      );
+    }
+
+    return Response<Token>(
+      statusCode: response.statusCode,
+      statusText: response.statusText,
+      body: dados,
+    );
   }
+
+  return Response<Token>(
+    statusCode: response.statusCode,
+    statusText: response.statusText,
+  );
+}
 
   Future<Token?> refreshToken(String refreshToken) async {
   final response = await post(
@@ -56,13 +73,18 @@ class AuthService extends GetConnect {
   }
 //=======================================//============================================
 
-  Future<Response> forgotPassword(String email) async {
-  return await post(
+Future<Response> forgotPassword(String email) async {
+  final response = await post(
     "$baseurl/api/auth/forgot-password",
     {
       "email": email,
     },
   );
+
+  print('Status: ${response.statusCode}');
+  print('Resposta: ${response.body}');
+
+  return response;
 }
 
 Future<Response> verifyCode(String email, String code) async {

@@ -16,12 +16,25 @@ class PatrimoniosPage extends GetView<Patrimoniocontroller> {
       appBar: AppBar(
         leading: Builder(
           builder: (context) {
-            return InkWell(
-              onTap: () => Scaffold.of(context).openDrawer(),
-              child: Padding(padding: padding),
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              tooltip: 'Abrir menu',
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+
+              },
             );
           }
         ),
+
+        title: Align(
+    alignment: Alignment.centerRight,
+    child: Image.asset(
+      'assets/images/logoflutter.png',
+      height: 40,
+      fit: BoxFit.contain,
+    ),
+  ),
         actions: [
           IconButton(
             onPressed: controller.listarPatrimonios,

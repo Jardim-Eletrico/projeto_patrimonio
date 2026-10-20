@@ -182,4 +182,55 @@ Future<bool> cadastrarPatrimonio(Patrimonio novo) async {
     }
 
   }
+
+  Future<bool> atribuirPatrimonio(
+  int patrimonioId,
+  int professorId,
+  ) async {
+  if (_semPermissao()) return false;
+
+  carregando.value = true;
+  erro.value = '';
+
+  try {
+    final response = await service.atribuirPatrimonio(
+      patrimonioId,
+      professorId,
+    );
+
+    if (response.isOk) {
+      await listarPatrimonios();
+
+      Get.snackbar(
+        'Sucesso',
+        response.body?['message'] ??
+            'Patrimônio atribuído ao professor.',
+      );
+
+      return true;
+    }
+
+    debugPrint(
+      'Erro ao atribuir patrimônio: ${response.statusCode}',
+    );
+    debugPrint('Resposta: ${response.bodyString}');
+
+    erro.value = response.body?['message'] ??
+        _mensagemErro(response);
+
+    Get.snackbar('Erro', erro.value);
+
+    return false;
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao atribuir patrimônio: $e');
+    debugPrint('$stackTrace');
+
+    erro.value = 'Não foi possível atribuir o patrimônio.';
+    Get.snackbar('Erro', erro.value);
+
+    return false;
+  } finally {
+    carregando.value = false;
+  }
+}
 }
