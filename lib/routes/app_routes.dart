@@ -5,4 +5,5 @@ abstract class AppRoutes {
   static const cadastrarAdministrador = '/cadastrar-administrador';
   static const cadastrarProf = '/cadastrar-prof';
   static const perfil = '/perfil';
+  static const usuarios = '/usuarios';
   }

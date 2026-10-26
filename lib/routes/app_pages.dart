@@ -13,7 +13,7 @@ import '../view/login/esqueci_senha_page.dart';
 import '../view/login/cadastrar_adm_page.dart';
 import '../binding/PerfilBinding.dart';
 import '../view/perfil/perfil_page.dart';
-
+import '../view/users/gestao_usuarios_page.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -69,6 +69,12 @@ class AppPages {
       page: () => PerfilPage(),
       binding: PerfilBinding(),
     ),
+
+    GetPage(
+  name: AppRoutes.usuarios,
+  page: () => const GestaoUsuariosPage(),
+  binding: UsuarioBinding(),
+),
 
   ];
 }

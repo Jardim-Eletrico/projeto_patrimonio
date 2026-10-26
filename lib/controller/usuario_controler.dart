@@ -11,6 +11,10 @@ import '../service/usuarios_service.dart';
 class UsuarioControler extends GetxController {
   final UsuariosService service;
   final AuthService authService;
+  
+  final estatisticas = Rxn<Map<String, dynamic>>();
+  final carregandoEstatisticas = false.obs;
+  final alterandoCargo = false.obs;
 
   UsuarioControler(this.service, this.authService);
 
@@ -23,16 +27,16 @@ class UsuarioControler extends GetxController {
 
   @override
   void onReady() {
-    super.onReady();
+  super.onReady();
 
-    debugPrint('UsuarioControler pronto.');
+  if (!authService.ehAdmin) return;
 
-    if (authService.ehAdmin) {
-      listarProfessores();
-    }
+  if (Get.currentRoute == '/usuarios') {
+    listarUsuarios();
+  } else if (Get.currentRoute == '/professores') {
+    listarProfessores();
   }
-
-  
+}
 
   Future<void> cadastrarProf(Usuario novo, String senha,) async {
     if (!authService.ehAdmin) {
@@ -81,7 +85,13 @@ class UsuarioControler extends GetxController {
     carregando.value = true;
 
     try {
-      final response = await service.listarUsuarios();
+      final token = authService.token.value?.access;
+      
+      if (token == null || token.isEmpty) {
+      debugPrint('Sessão expirada. Entre novamente.');
+      return;
+    }
+      final response = await service.listarUsuarios(token);
 
       debugPrint('Usuários: HTTP ${response.statusCode}');
 
@@ -200,4 +210,72 @@ class UsuarioControler extends GetxController {
       carregando.value = false;
     }
   }
+
+  Future<void> carregarEstatisticas() async {
+  carregandoEstatisticas.value = true;
+
+  try {
+    final token = authService.accessToken;
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Token de autenticação não encontrado.');
+    }
+
+    final response = await service.obterEstatisticas(token);
+
+    if (response.isOk && response.body != null) {
+      estatisticas.value = response.body;
+    } else {
+      Get.snackbar(
+        'Erro',
+        'Não foi possível carregar as estatísticas.',
+      );
+    }
+  } catch (e) {
+    Get.snackbar('Erro', 'Falha ao carregar estatísticas: $e');
+  } finally {
+    carregandoEstatisticas.value = false;
+  }
+}
+
+Future<void> alterarCargo(int id, String novoRole) async {
+  if (novoRole != 'admin' && novoRole != 'professor') {
+    Get.snackbar('Erro', 'Cargo inválido.');
+    return;
+  }
+
+  alterandoCargo.value = true;
+
+  try {
+    final token = authService.accessToken;
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Token de autenticação não encontrado.');
+    }
+
+    final response = await service.alterarRole(
+      id,
+      novoRole,
+      token,
+    );
+
+    if (response.isOk) {
+      Get.snackbar(
+        'Sucesso',
+        'Cargo atualizado com sucesso.',
+      );
+
+      await listarUsuarios();
+    } else {
+      Get.snackbar(
+        'Erro',
+        'Não foi possível alterar o cargo.',
+      );
+    }
+  } catch (e) {
+    Get.snackbar('Erro', 'Falha ao alterar cargo: $e');
+  } finally {
+    alterandoCargo.value = false;
+  }
+}
 }

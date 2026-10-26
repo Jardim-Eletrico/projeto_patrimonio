@@ -82,7 +82,7 @@ class MenuLateral extends GetView<AuthService> {
               ListTile(
                 leading: const Icon(Icons.people_outline),
                 title: const Text('Gestão de Usuários'),
-                onTap: () => navegar(context, '/usuarios'),
+                onTap: () => navegar(context, AppRoutes.usuarios),
               ),
 
               ListTile(

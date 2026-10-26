@@ -13,48 +13,64 @@ class UsuariosService extends GetConnect {
 
   final String baseurl = 'http://172.31.80.1:8081';
 
-  Future<Response<List<Usuario>>> listarUsuarios() {
-    return get<List<Usuario>>(
-      '$baseurl/api/admin/users',
-      decoder: (dados) {
-        if (dados is List) {
-          return dados.map((json) {
-            return Usuario.fromJson(
-              Map<String, dynamic>.from(json as Map),
-            );
-          }).toList();
-        }
+  Future<Response<List<Usuario>>> listarUsuarios(String accessToken) {
+  return get<List<Usuario>>(
+    '$baseurl/api/admin/users',
+    headers: {
+      'Authorization': 'Bearer $accessToken',
+    },
+    decoder: (dados) {
+      List<dynamic>? lista;
 
-        if (dados is Map && dados['users'] is List) {
-          final lista = dados['users'] as List;
+      if (dados is List) {
+        lista = dados;
+      } else if (dados is Map && dados['users'] is List) {
+        lista = dados['users'] as List;
+      }
 
-          return lista.map((json) {
-            return Usuario.fromJson(
-              Map<String, dynamic>.from(json as Map),
-            );
-          }).toList();
-        }
-
+      if (lista == null) {
         throw const FormatException(
           'A resposta não contém uma lista de usuários válida.',
         );
-      },
-    );
-  }
+      }
 
-  Future<Response> alterarRole(int id, String role) {
-    return patch(
-      '$baseurl/api/admin/users/$id/role',
-      {'role': role},
-    );
-  }
+      return lista.map((json) {
+        return Usuario.fromJson(
+          Map<String, dynamic>.from(json as Map),
+        );
+      }).toList();
+    },
+  );
+}
 
-  Future<Response<MetricasUsuarios>> obterMetricas() {
-    return get<MetricasUsuarios>(
-      '$baseurl/api/admin/users/metrics',
-      decoder: (dados) => MetricasUsuarios.fromJson(dados),
-    );
-  }
+
+Future<Response> alterarRole(
+  int id,
+  String role,
+  String accessToken,
+) {
+  return patch(
+    '$baseurl/api/admin/users/$id/role',
+    {'role': role},
+    headers: {
+      'Authorization': 'Bearer $accessToken',
+    },
+  );
+}
+
+Future<Response<Map<String, dynamic>>> obterEstatisticas(
+  String accessToken,
+) {
+  return get<Map<String, dynamic>>(
+    '$baseurl/api/admin/stats',
+    headers: {
+      'Authorization': 'Bearer $accessToken',
+    },
+    decoder: (dados) =>
+        Map<String, dynamic>.from(dados as Map),
+  );
+}
+
 
   Future<Response<List<Usuario>>> listarProfessores(
     String accessToken,
