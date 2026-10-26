@@ -105,18 +105,26 @@ class UsuariosService extends GetConnect {
     );
   }
 
-  Future<Response> cadastrarProfessor(Usuario usuario) {
-    final token = authService.accessToken;
+  Future<Response> cadastrarProfessor(
+  Usuario usuario,
+  String senha,
+) {
+  final dados = {
+    ...usuario.toJson(),
+    'password': senha,
+  };
 
-    return post(
-      '$baseurl/api/admin/professores',
-      usuario.toJson(),
-      headers: {
-        'Authorization' : 'Bearer $token',
-        'Content-Type' : 'application/json',
-      },
-    );
-  }
+  final token = authService.accessToken;
+
+  return post(
+    '$baseurl/api/admin/professores',
+    dados,
+    headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    },
+  );
+}
 
   Future<Response> deletarUsuario(int id) {
     return delete('$baseurl/api/admin/users/$id');

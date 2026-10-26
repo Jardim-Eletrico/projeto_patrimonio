@@ -42,6 +42,28 @@ class PatrimonioService extends GetConnect {
     return response;
   }
 
+  Future<Response<List<Patrimonio>>> listarMeusPatrimonios() {
+  return get<List<Patrimonio>>(
+    '$baseurl/api/patrimonios/meus',
+    headers: {
+      'Authorization': 'Bearer ${authService.accessToken}',
+    },
+    decoder: (dados) {
+      if (dados is List) {
+        return dados
+            .map(
+              (item) => Patrimonio.fromJson(
+                Map<String, dynamic>.from(item),
+              ),
+            )
+            .toList();
+      }
+
+      return <Patrimonio>[];
+    },
+  );
+}
+
   Future<Response> buscarPatrimonio(int id) {
     return get(
       '$baseurl/api/patrimonios/$id',

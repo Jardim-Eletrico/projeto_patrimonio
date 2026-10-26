@@ -1,6 +1,8 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../model/usuario.dart';
 import '../service/auth_service.dart';
@@ -32,7 +34,7 @@ class UsuarioControler extends GetxController {
 
   
 
-  Future<void> cadastrarProf(Usuario novo) async {
+  Future<void> cadastrarProf(Usuario novo, String senha,) async {
     if (!authService.ehAdmin) {
       debugPrint(
         'Cadastro bloqueado: usuário não é administrador.',
@@ -43,11 +45,19 @@ class UsuarioControler extends GetxController {
     carregando.value = true;
 
     try {
-      final response = await service.cadastrarProfessor(novo);
+      final response = await service.cadastrarProfessor(novo, senha,);
 
       debugPrint('Cadastro: HTTP ${response.statusCode}');
 
       if (response.isOk) {
+              Get.snackbar(
+          'Sucesso',
+          'Professor cadastrado com sucesso!',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
         await listarProfessores();
       } else {
         debugPrint('Erro no cadastro: ${response.body}');

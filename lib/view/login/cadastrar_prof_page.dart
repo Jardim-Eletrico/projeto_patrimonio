@@ -125,7 +125,7 @@ class _CadastrarProfPageState extends State<CadastrarProfPage> {
       role: 'professor',
     );
 
-    await controller.cadastrarProf(usuario);
+    await controller.cadastrarProf(usuario, senhaCtrl.text,);
 
     // O controller atual não retorna um resultado de sucesso.
     // Por isso, ainda não fechamos a tela automaticamente.

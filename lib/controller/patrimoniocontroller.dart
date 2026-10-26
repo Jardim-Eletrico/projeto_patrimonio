@@ -51,7 +51,12 @@ class Patrimoniocontroller extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    if (authService.ehAdmin) {
     listarPatrimonios();
+    }else{
+      listarMeusPatrimonios();
+    }
   }
 
   Future<void> listarPatrimonios() async {
@@ -108,6 +113,28 @@ class Patrimoniocontroller extends GetxController {
     }
   }
 
+
+  Future<void> listarMeusPatrimonios() async {
+  carregando.value = true;
+  erro.value = '';
+
+  try {
+    final response = await service.listarMeusPatrimonios();
+
+    if (response.isOk) {
+      patrimonios.assignAll(response.body ?? []);
+    } else {
+      mostrarErro(_mensagemErro(response));
+    }
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao listar meus patrimônios: $e');
+    debugPrintStack(stackTrace: stackTrace);
+
+    mostrarErro('Erro ao carregar seus patrimônios.');
+  } finally {
+    carregando.value = false;
+  }
+}
   
 Future<bool> cadastrarPatrimonio(Patrimonio novo) async {
   if (_semPermissao()) return false;
