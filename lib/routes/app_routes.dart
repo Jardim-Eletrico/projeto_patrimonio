@@ -4,4 +4,5 @@ abstract class AppRoutes {
   static const esqueciSenha = '/esqueci-senha';
   static const cadastrarAdministrador = '/cadastrar-administrador';
   static const cadastrarProf = '/cadastrar-prof';
+  static const perfil = '/perfil';
   }

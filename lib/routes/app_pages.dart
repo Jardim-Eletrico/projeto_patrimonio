@@ -11,6 +11,8 @@ import '../view/login/login_page.dart';
 import '../view/patrimonios/patrimonios_page.dart';
 import '../view/login/esqueci_senha_page.dart';
 import '../view/login/cadastrar_adm_page.dart';
+import '../binding/PerfilBinding.dart';
+import '../view/perfil/perfil_page.dart';
 
 import 'app_routes.dart';
 
@@ -61,6 +63,12 @@ class AppPages {
         page: () => const CadastrarProfPage(),
         binding: UsuarioBinding(),
       ),
+
+      GetPage(
+      name: AppRoutes.perfil,
+      page: () => PerfilPage(),
+      binding: PerfilBinding(),
+    ),
 
   ];
 }
