@@ -14,6 +14,7 @@ import '../view/login/cadastrar_adm_page.dart';
 import '../binding/PerfilBinding.dart';
 import '../view/perfil/perfil_page.dart';
 import '../view/users/gestao_usuarios_page.dart';
+import '../binding/CadastroAdministradorBinding.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -55,7 +56,7 @@ class AppPages {
       GetPage(
         name: AppRoutes.cadastrarAdministrador,
         page: () => const CadastroAdministradorPage(),
-        binding: LoginBinding(),
+        binding: CadastroAdministradorBinding(),
         ),
 
         GetPage(
