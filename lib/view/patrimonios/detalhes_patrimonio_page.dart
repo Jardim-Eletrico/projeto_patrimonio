@@ -194,6 +194,9 @@ class _DetalhesPatrimonioPageState
     if (!mounted) return;
 
     if (sucesso) {
+      setState(() {
+        item.professorId = professorIdSelecionado?.toString();
+      });
       Get.snackbar(
         'Sucesso',
         'Patrimônio atribuído ao professor.',
@@ -361,7 +364,8 @@ Future<void> _desatribuirProfessor() async {
                   },
                 ),
 
-                const SizedBox(height: 12),
+                if (item.professorId == null) ...[
+                  const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
                   height: 54,
@@ -371,8 +375,7 @@ Future<void> _desatribuirProfessor() async {
                     label: const Text('Atribuir professor'),
                   ),
                 ),
-
-                if (item.professorId != null) ...[
+                ]else ...[
                   const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
