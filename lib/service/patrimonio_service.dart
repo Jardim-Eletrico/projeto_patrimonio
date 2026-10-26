@@ -132,4 +132,24 @@ class PatrimonioService extends GetConnect {
     );
   }).toList();
 }
+
+
+Future<Response<Map<String, dynamic>>> obterEstatisticas() {
+  return get<Map<String, dynamic>>(
+    '$baseurl/api/admin/patrimonios/stats',
+    headers: headersAutenticados,
+    decoder: (dados) =>
+        Map<String, dynamic>.from(dados as Map),
+  );
+}
+
+Future<Response<Map<String, dynamic>>> obterHistorico(int id) {
+  return get<Map<String, dynamic>>(
+    '$baseurl/api/admin/patrimonios/$id/historico',
+    headers: headersAutenticados,
+    decoder: (dados) =>
+        Map<String, dynamic>.from(dados as Map),
+  );
+}
+
 }

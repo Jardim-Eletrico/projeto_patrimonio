@@ -15,6 +15,12 @@ class Patrimoniocontroller extends GetxController {
   final carregando = false.obs;
   final erro = ''.obs;
 
+  final estatisticas = Rxn<Map<String, dynamic>>();
+  final historico = Rxn<Map<String, dynamic>>();
+
+  final carregandoEstatisticas = false.obs;
+  final carregandoHistorico = false.obs;
+
   bool get podeEditar => authService.ehAdmin;
 
   bool _semPermissao() {
@@ -312,4 +318,67 @@ Future<bool> desatribuirPatrimonio(int patrimonioId) async {
     carregando.value = false;
   }
 }
+
+
+Future<void> carregarEstatisticas() async {
+  if (_semPermissao()) return;
+
+  carregandoEstatisticas.value = true;
+
+  try {
+    final response = await service.obterEstatisticas();
+
+    if (response.isOk && response.body != null) {
+      estatisticas.value = response.body;
+    } else {
+      Get.snackbar(
+        'Erro',
+        _mensagemErro(response),
+      );
+    }
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao carregar estatísticas: $e');
+    debugPrintStack(stackTrace: stackTrace);
+
+    Get.snackbar(
+      'Erro',
+      'Não foi possível carregar as estatísticas dos patrimônios.',
+    );
+  } finally {
+    carregandoEstatisticas.value = false;
+  }
+}
+
+
+Future<void> carregarHistorico(int patrimonioId) async {
+  if (_semPermissao()) return;
+
+  carregandoHistorico.value = true;
+  historico.value = null;
+
+  try {
+    final response = await service.obterHistorico(patrimonioId);
+
+    if (response.isOk && response.body != null) {
+      historico.value = response.body;
+    } else {
+      Get.snackbar(
+        'Erro',
+        _mensagemErro(response),
+      );
+    }
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao carregar histórico: $e');
+    debugPrintStack(stackTrace: stackTrace);
+
+    Get.snackbar(
+      'Erro',
+      'Não foi possível carregar o histórico do patrimônio.',
+    );
+  } finally {
+    carregandoHistorico.value = false;
+  }
+}
+
+
 }

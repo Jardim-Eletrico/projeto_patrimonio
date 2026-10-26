@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:projeto_patrimonio/controller/patrimoniocontroller.dart';
 import 'package:projeto_patrimonio/widgets/menu_lateral.dart';
+import 'package:projeto_patrimonio/widgets/estatisticas_patrimonio_dialog.dart';
+import 'package:projeto_patrimonio/widgets/historico_patrimonio_dialog.dart';
 
 class PatrimoniosPage extends GetView<Patrimoniocontroller> {
   const PatrimoniosPage({super.key});
@@ -36,12 +38,25 @@ class PatrimoniosPage extends GetView<Patrimoniocontroller> {
     ),
   ),
         actions: [
-          IconButton(
-            onPressed: controller.listarPatrimonios,
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Atualizar',
+          if (controller.podeEditar)
+          IconButton(onPressed: () {
+            EstatisticasPatrimonioDialog.mostrar(controller);
+          },
+          icon: const Icon(Icons.bar_chart),
+          tooltip: 'Estatísticas dos patrimônios',
           ),
-        ],
+          IconButton(
+          onPressed: () {
+            if (controller.podeEditar) {
+              controller.listarPatrimonios();
+            } else {
+              controller.listarMeusPatrimonios();
+            }
+          },
+          icon: const Icon(Icons.refresh),
+          tooltip: 'Atualizar',
+        ),
+        ]
       ),
 
       body: Column(
@@ -120,17 +135,28 @@ class PatrimoniosPage extends GetView<Patrimoniocontroller> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: ListTile(
-                      title: Text(
-                        item.nome,
-                        textAlign: TextAlign.center,
-                      ),
-                      onTap: () {
-                        Get.toNamed(
-                          '/patrimonios/detalhes',
-                          arguments: item,
-                        );
-                      },
+                    title: Text(
+                      item.nome,
+                      textAlign: TextAlign.center,
                     ),
+                    trailing: controller.podeEditar && item.id != null ? IconButton(
+                    icon: const Icon(Icons.history),
+                    tooltip: 'Ver histórico',
+                    onPressed: () {
+                      HistoricoPatrimonioDialog.mostrar(
+                        controller,
+                        item.id!,
+                      );
+                      },
+                      )
+                      : null,
+                        onTap: () {
+                          Get.toNamed(
+                            '/patrimonios/detalhes',
+                            arguments: item,
+                          );
+                        },
+                      ),
                   );
                 },
               );
