@@ -2,7 +2,7 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-
+import 'package:flutter/foundation.dart';
 import '../model/patrimonio.dart';
 import 'auth_service.dart';
 
@@ -22,12 +22,24 @@ class PatrimonioService extends GetConnect {
     };
   }
 
-  Future<Response<List<Patrimonio>>> listarPatrimonios() {
-    return get(
+  Future<Response<List<Patrimonio>>> listarPatrimonios() async {
+    debugPrint('========== SERVICE: PATRIMÔNIOS ==========');
+    debugPrint('ID do usuário: ${authService.usuario.value?.id}');
+    debugPrint('Role: ${authService.usuario.value?.role}');
+    debugPrint(
+      'Token disponível: ${authService.accessToken != null}',
+    );
+
+    final response = await get(
       '$baseurl/api/patrimonios',
       headers: headersAutenticados,
       decoder: (dados) => decoder(dados),
     );
+
+    debugPrint('Status HTTP: ${response.statusCode}');
+    debugPrint('Quantidade retornada: ${response.body?.length}');
+
+    return response;
   }
 
   Future<Response> buscarPatrimonio(int id) {

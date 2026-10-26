@@ -6,7 +6,7 @@ import '../binding/LoginBinding.dart';
 import '../binding/PatrimonioBinding.dart';
 import '../binding/UsuarioBinding.dart';
 import '../view/users/gestao_professores.dart';
-
+import '../view/login/cadastrar_prof_page.dart';
 import '../view/login/login_page.dart';
 import '../view/patrimonios/patrimonios_page.dart';
 import '../view/login/esqueci_senha_page.dart';
@@ -55,6 +55,12 @@ class AppPages {
         page: () => const CadastroAdministradorPage(),
         binding: LoginBinding(),
         ),
+
+        GetPage(
+        name: AppRoutes.cadastrarProf,
+        page: () => const CadastrarProfPage(),
+        binding: UsuarioBinding(),
+      ),
 
   ];
 }

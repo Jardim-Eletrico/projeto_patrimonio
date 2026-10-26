@@ -3,4 +3,5 @@ abstract class AppRoutes {
   static const patrimonios = '/patrimonios';
   static const esqueciSenha = '/esqueci-senha';
   static const cadastrarAdministrador = '/cadastrar-administrador';
+  static const cadastrarProf = '/cadastrar-prof';
   }

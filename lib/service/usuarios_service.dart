@@ -1,11 +1,16 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'auth_service.dart';
 
 import '../model/metricarusuarios.dart';
 import '../model/usuario.dart';
 
 class UsuariosService extends GetConnect {
+  final AuthService authService;
+
+  UsuariosService(this.authService);
+
   final String baseurl = 'http://172.31.80.1:8081';
 
   Future<Response<List<Usuario>>> listarUsuarios() {
@@ -101,9 +106,15 @@ class UsuariosService extends GetConnect {
   }
 
   Future<Response> cadastrarProfessor(Usuario usuario) {
+    final token = authService.accessToken;
+
     return post(
       '$baseurl/api/admin/professores',
       usuario.toJson(),
+      headers: {
+        'Authorization' : 'Bearer $token',
+        'Content-Type' : 'application/json',
+      },
     );
   }
 

@@ -95,6 +95,15 @@ class MenuLateral extends GetView<AuthService> {
                   AppRoutes.cadastrarAdministrador,
                 ),
               ),
+
+              ListTile(
+              leading: const Icon(Icons.person_add_alt_1),
+              title: const Text('Cadastrar professor'),
+              onTap: () => navegar(
+                context,
+                AppRoutes.cadastrarProf,
+               ),
+              ),
             ],
 
             const Spacer(),

@@ -55,25 +55,39 @@ class Patrimoniocontroller extends GetxController {
   }
 
   Future<void> listarPatrimonios() async {
-    carregando.value = true;
-    erro.value = '';
+  carregando.value = true;
+  erro.value = '';
 
-    try {
-      final response = await service.listarPatrimonios();
+  try {
+    debugPrint('========== LISTAR PATRIMÔNIOS ==========');
+    debugPrint('Usuário logado: ${authService.usuario.value?.nome}');
+    debugPrint('Role: ${authService.usuario.value?.role}');
 
-      if (response.isOk) {
-        patrimonios.assignAll(response.body ?? []);
-      } else {
-        mostrarErro(_mensagemErro(response));
-      }
-    } catch (e, stackTrace) {
-      debugPrint('Erro ao listar patrimonios: $e');
-      debugPrint('Stack trace: $stackTrace');
-      mostrarErro('Erro ao carregar os patrimônios');
-    } finally {
-      carregando.value = false;
+    final response = await service.listarPatrimonios();
+
+    debugPrint('Status HTTP: ${response.statusCode}');
+    debugPrint('Resposta: ${response.body}');
+    debugPrint('Erro HTTP: ${response.statusText}');
+
+    if (response.isOk) {
+      patrimonios.assignAll(response.body ?? []);
+
+      debugPrint(
+        'Total de patrimônios carregados: ${patrimonios.length}',
+      );
+    } else {
+      mostrarErro(_mensagemErro(response));
+      debugPrint('Mensagem de erro: ${erro.value}');
     }
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao listar patrimônios: $e');
+    debugPrint('Stack trace: $stackTrace');
+
+    mostrarErro('Erro ao carregar os patrimônios');
+  } finally {
+    carregando.value = false;
   }
+}
 
   Future<void> buscarPatrimonio(int id) async {
     carregando.value = true;
