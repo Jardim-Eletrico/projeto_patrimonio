@@ -6,12 +6,15 @@ import '../binding/LoginBinding.dart';
 import '../binding/PatrimonioBinding.dart';
 import '../binding/UsuarioBinding.dart';
 import '../view/users/gestao_professores.dart';
-
+import '../view/login/cadastrar_prof_page.dart';
 import '../view/login/login_page.dart';
 import '../view/patrimonios/patrimonios_page.dart';
 import '../view/login/esqueci_senha_page.dart';
 import '../view/login/cadastrar_adm_page.dart';
-
+import '../binding/PerfilBinding.dart';
+import '../view/perfil/perfil_page.dart';
+import '../view/users/gestao_usuarios_page.dart';
+import '../binding/CadastroAdministradorBinding.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -53,8 +56,26 @@ class AppPages {
       GetPage(
         name: AppRoutes.cadastrarAdministrador,
         page: () => const CadastroAdministradorPage(),
-        binding: LoginBinding(),
+        binding: CadastroAdministradorBinding(),
         ),
+
+        GetPage(
+        name: AppRoutes.cadastrarProf,
+        page: () => const CadastrarProfPage(),
+        binding: UsuarioBinding(),
+      ),
+
+      GetPage(
+      name: AppRoutes.perfil,
+      page: () => PerfilPage(),
+      binding: PerfilBinding(),
+    ),
+
+    GetPage(
+  name: AppRoutes.usuarios,
+  page: () => const GestaoUsuariosPage(),
+  binding: UsuarioBinding(),
+),
 
   ];
 }

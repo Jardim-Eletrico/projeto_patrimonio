@@ -15,6 +15,12 @@ class Patrimoniocontroller extends GetxController {
   final carregando = false.obs;
   final erro = ''.obs;
 
+  final estatisticas = Rxn<Map<String, dynamic>>();
+  final historico = Rxn<Map<String, dynamic>>();
+
+  final carregandoEstatisticas = false.obs;
+  final carregandoHistorico = false.obs;
+
   bool get podeEditar => authService.ehAdmin;
 
   bool _semPermissao() {
@@ -51,29 +57,48 @@ class Patrimoniocontroller extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    if (authService.ehAdmin) {
     listarPatrimonios();
+    }else{
+      listarMeusPatrimonios();
+    }
   }
 
   Future<void> listarPatrimonios() async {
-    carregando.value = true;
-    erro.value = '';
+  carregando.value = true;
+  erro.value = '';
 
-    try {
-      final response = await service.listarPatrimonios();
+  try {
+    debugPrint('========== LISTAR PATRIMÔNIOS ==========');
+    debugPrint('Usuário logado: ${authService.usuario.value?.nome}');
+    debugPrint('Role: ${authService.usuario.value?.role}');
 
-      if (response.isOk) {
-        patrimonios.assignAll(response.body ?? []);
-      } else {
-        mostrarErro(_mensagemErro(response));
-      }
-    } catch (e, stackTrace) {
-      debugPrint('Erro ao listar patrimonios: $e');
-      debugPrint('Stack trace: $stackTrace');
-      mostrarErro('Erro ao carregar os patrimônios');
-    } finally {
-      carregando.value = false;
+    final response = await service.listarPatrimonios();
+
+    debugPrint('Status HTTP: ${response.statusCode}');
+    debugPrint('Resposta: ${response.body}');
+    debugPrint('Erro HTTP: ${response.statusText}');
+
+    if (response.isOk) {
+      patrimonios.assignAll(response.body ?? []);
+
+      debugPrint(
+        'Total de patrimônios carregados: ${patrimonios.length}',
+      );
+    } else {
+      mostrarErro(_mensagemErro(response));
+      debugPrint('Mensagem de erro: ${erro.value}');
     }
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao listar patrimônios: $e');
+    debugPrint('Stack trace: $stackTrace');
+
+    mostrarErro('Erro ao carregar os patrimônios');
+  } finally {
+    carregando.value = false;
   }
+}
 
   Future<void> buscarPatrimonio(int id) async {
     carregando.value = true;
@@ -94,6 +119,28 @@ class Patrimoniocontroller extends GetxController {
     }
   }
 
+
+  Future<void> listarMeusPatrimonios() async {
+  carregando.value = true;
+  erro.value = '';
+
+  try {
+    final response = await service.listarMeusPatrimonios();
+
+    if (response.isOk) {
+      patrimonios.assignAll(response.body ?? []);
+    } else {
+      mostrarErro(_mensagemErro(response));
+    }
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao listar meus patrimônios: $e');
+    debugPrintStack(stackTrace: stackTrace);
+
+    mostrarErro('Erro ao carregar seus patrimônios.');
+  } finally {
+    carregando.value = false;
+  }
+}
   
 Future<bool> cadastrarPatrimonio(Patrimonio novo) async {
   if (_semPermissao()) return false;
@@ -271,4 +318,67 @@ Future<bool> desatribuirPatrimonio(int patrimonioId) async {
     carregando.value = false;
   }
 }
+
+
+Future<void> carregarEstatisticas() async {
+  if (_semPermissao()) return;
+
+  carregandoEstatisticas.value = true;
+
+  try {
+    final response = await service.obterEstatisticas();
+
+    if (response.isOk && response.body != null) {
+      estatisticas.value = response.body;
+    } else {
+      Get.snackbar(
+        'Erro',
+        _mensagemErro(response),
+      );
+    }
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao carregar estatísticas: $e');
+    debugPrintStack(stackTrace: stackTrace);
+
+    Get.snackbar(
+      'Erro',
+      'Não foi possível carregar as estatísticas dos patrimônios.',
+    );
+  } finally {
+    carregandoEstatisticas.value = false;
+  }
+}
+
+
+Future<void> carregarHistorico(int patrimonioId) async {
+  if (_semPermissao()) return;
+
+  carregandoHistorico.value = true;
+  historico.value = null;
+
+  try {
+    final response = await service.obterHistorico(patrimonioId);
+
+    if (response.isOk && response.body != null) {
+      historico.value = response.body;
+    } else {
+      Get.snackbar(
+        'Erro',
+        _mensagemErro(response),
+      );
+    }
+  } catch (e, stackTrace) {
+    debugPrint('Erro ao carregar histórico: $e');
+    debugPrintStack(stackTrace: stackTrace);
+
+    Get.snackbar(
+      'Erro',
+      'Não foi possível carregar o histórico do patrimônio.',
+    );
+  } finally {
+    carregandoHistorico.value = false;
+  }
+}
+
+
 }

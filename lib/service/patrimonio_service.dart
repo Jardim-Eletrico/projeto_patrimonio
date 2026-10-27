@@ -2,7 +2,7 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-
+import 'package:flutter/foundation.dart';
 import '../model/patrimonio.dart';
 import 'auth_service.dart';
 
@@ -22,13 +22,47 @@ class PatrimonioService extends GetConnect {
     };
   }
 
-  Future<Response<List<Patrimonio>>> listarPatrimonios() {
-    return get(
+  Future<Response<List<Patrimonio>>> listarPatrimonios() async {
+    debugPrint('========== SERVICE: PATRIMÔNIOS ==========');
+    debugPrint('ID do usuário: ${authService.usuario.value?.id}');
+    debugPrint('Role: ${authService.usuario.value?.role}');
+    debugPrint(
+      'Token disponível: ${authService.accessToken != null}',
+    );
+
+    final response = await get(
       '$baseurl/api/patrimonios',
       headers: headersAutenticados,
       decoder: (dados) => decoder(dados),
     );
+
+    debugPrint('Status HTTP: ${response.statusCode}');
+    debugPrint('Quantidade retornada: ${response.body?.length}');
+
+    return response;
   }
+
+  Future<Response<List<Patrimonio>>> listarMeusPatrimonios() {
+  return get<List<Patrimonio>>(
+    '$baseurl/api/patrimonios/meus',
+    headers: {
+      'Authorization': 'Bearer ${authService.accessToken}',
+    },
+    decoder: (dados) {
+      if (dados is List) {
+        return dados
+            .map(
+              (item) => Patrimonio.fromJson(
+                Map<String, dynamic>.from(item),
+              ),
+            )
+            .toList();
+      }
+
+      return <Patrimonio>[];
+    },
+  );
+}
 
   Future<Response> buscarPatrimonio(int id) {
     return get(
@@ -98,4 +132,24 @@ class PatrimonioService extends GetConnect {
     );
   }).toList();
 }
+
+
+Future<Response<Map<String, dynamic>>> obterEstatisticas() {
+  return get<Map<String, dynamic>>(
+    '$baseurl/api/admin/patrimonios/stats',
+    headers: headersAutenticados,
+    decoder: (dados) =>
+        Map<String, dynamic>.from(dados as Map),
+  );
+}
+
+Future<Response<Map<String, dynamic>>> obterHistorico(int id) {
+  return get<Map<String, dynamic>>(
+    '$baseurl/api/admin/patrimonios/$id/historico',
+    headers: headersAutenticados,
+    decoder: (dados) =>
+        Map<String, dynamic>.from(dados as Map),
+  );
+}
+
 }

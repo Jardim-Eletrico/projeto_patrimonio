@@ -48,13 +48,13 @@ class MenuLateral extends GetView<AuthService> {
             ListTile(
               leading: const Icon(Icons.inventory_2_outlined),
               title: const Text('Patrimônios'),
-              onTap: () => navegar(context, '/patrimonios'),
+              onTap: () => navegar(context, AppRoutes.patrimonios),
             ),
 
             ListTile(
               leading: const Icon(Icons.person_outline),
               title: const Text('Meu perfil'),
-              onTap: () => navegar(context, '/perfil'),
+              onTap: () => navegar(context, AppRoutes.perfil),
             ),
 
             
@@ -82,7 +82,7 @@ class MenuLateral extends GetView<AuthService> {
               ListTile(
                 leading: const Icon(Icons.people_outline),
                 title: const Text('Gestão de Usuários'),
-                onTap: () => navegar(context, '/usuarios'),
+                onTap: () => navegar(context, AppRoutes.usuarios),
               ),
 
               ListTile(
@@ -94,6 +94,15 @@ class MenuLateral extends GetView<AuthService> {
                   context,
                   AppRoutes.cadastrarAdministrador,
                 ),
+              ),
+
+              ListTile(
+              leading: const Icon(Icons.person_add_alt_1),
+              title: const Text('Cadastrar professor'),
+              onTap: () => navegar(
+                context,
+                AppRoutes.cadastrarProf,
+               ),
               ),
             ],
 
