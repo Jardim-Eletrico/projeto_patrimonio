@@ -2,7 +2,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../model/usuario.dart';
 import '../service/auth_service.dart';

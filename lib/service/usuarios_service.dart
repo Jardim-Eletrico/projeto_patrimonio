@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'auth_service.dart';
 
-import '../model/metricarusuarios.dart';
 import '../model/usuario.dart';
 
 class UsuariosService extends GetConnect {

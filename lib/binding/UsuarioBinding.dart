@@ -8,17 +8,21 @@ import '../service/usuarios_service.dart';
 class UsuarioBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<UsuariosService>(
-      () => UsuariosService(
-        Get.find<AuthService>(),
-      ),
-    );
+    if (!Get.isRegistered<UsuariosService>()) {
+      Get.lazyPut<UsuariosService>(
+        () => UsuariosService(
+          Get.find<AuthService>(),
+        ),
+      );
+    }
 
-    Get.lazyPut<UsuarioControler>(
-      () => UsuarioControler(
-        Get.find<UsuariosService>(),
-        Get.find<AuthService>(),
-      ),
-    );
+    if (!Get.isRegistered<UsuarioControler>()) {
+      Get.lazyPut<UsuarioControler>(
+        () => UsuarioControler(
+          Get.find<UsuariosService>(),
+          Get.find<AuthService>(),
+        ),
+      );
+    }
   }
 }

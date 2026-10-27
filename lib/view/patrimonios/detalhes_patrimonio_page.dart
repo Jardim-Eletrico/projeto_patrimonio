@@ -9,7 +9,6 @@ import 'package:projeto_patrimonio/widgets/campo_selecao.dart';
 import 'package:projeto_patrimonio/widgets/botaoprincipal.dart';
 
 import '../../controller/usuario_controler.dart';
-import 'package:projeto_patrimonio/model/usuario.dart';
 
 class DetalhesPatrimonioPage extends StatefulWidget {
   const DetalhesPatrimonioPage({super.key});

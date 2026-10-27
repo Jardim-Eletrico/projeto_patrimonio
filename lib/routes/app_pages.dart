@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:projeto_patrimonio/view/patrimonios/adicionar_patrimonio_page.dart';
 import 'package:projeto_patrimonio/view/patrimonios/detalhes_patrimonio_page.dart';
-import '../binding/InicialBinding.dart';
 import '../binding/LoginBinding.dart';
 import '../binding/PatrimonioBinding.dart';
 import '../binding/UsuarioBinding.dart';

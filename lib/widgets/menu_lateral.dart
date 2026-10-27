@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../service/usuarios_service.dart';
 
 import '../service/auth_service.dart';
 import '../routes/app_routes.dart';
@@ -13,7 +14,14 @@ class MenuLateral extends GetView<AuthService> {
     Get.toNamed(rota);
   }
 
-  Future<void> sair() async {
+  
+Future<void> sair() async {
+  debugPrint('Logout iniciado');
+  debugPrint(
+    'UsuariosService registrado: '
+    '${Get.isRegistered<UsuariosService>()}',
+  );
+
   final accessToken = controller.accessToken;
 
   if (accessToken != null && accessToken.isNotEmpty) {
@@ -23,8 +31,10 @@ class MenuLateral extends GetView<AuthService> {
     controller.usuario.value = null;
   }
 
+  debugPrint('Logout concluído; navegando para login');
   Get.offAllNamed(AppRoutes.login);
 }
+
 
   @override
   Widget build(BuildContext context) {
