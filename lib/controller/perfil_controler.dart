@@ -45,53 +45,89 @@ class PerfilController extends GetxController {
     }
   }
 
-  Future<bool> atualizarPerfil({
-    required String nome,
-    required String email,
-  }) async {
-    final usuarioAtual = usuario.value;
-    final token = authService.token.value?.access;
+  
+Future<bool> atualizarPerfil({
+  required String nome,
+  required String email,
+  String? cpf,
+  String? telefone,
+  String? matricula,
+  String? departamento,
+  DateTime? dataNascimento,
+  String? genero,
+  String? cep,
+  String? endereco,
+  String? cidadeUF,
+  String? contatoEmergencia,
+  String? tipoSanguineo,
+  String? alergias,
+}) async {
+  final usuarioAtual = usuario.value;
+  final token = authService.token.value?.access;
 
-    if (usuarioAtual == null) {
-      erro.value = 'Carregue o perfil antes de editá-lo.';
-      return false;
-    }
-
-    if (token == null || token.isEmpty) {
-      erro.value = 'Sessão expirada. Entre novamente.';
-      return false;
-    }
-
-    carregando.value = true;
-    erro.value = '';
-
-    try {
-      final dados = Map<String, dynamic>.from(
-        usuarioAtual.toJson(),
-      );
-
-      dados['nome'] = nome.trim();
-      dados['email'] = email.trim();
-
-      final usuarioEditado = Usuario.fromJson(dados);
-
-      final response = await perfilService.atualizarPerfil(
-        usuarioEditado,
-        token,
-      );
-
-      if (response.isOk) {
-        usuario.value = usuarioEditado;
-        return true;
-      }
-
-      erro.value = 'Não foi possível atualizar o perfil.';
-      return false;
-    } catch (e) {
-      erro.value = 'Ocorreu um erro ao atualizar o perfil.';
-      return false;
-    } finally {
-      carregando.value = false;
-    }
+  if (usuarioAtual == null) {
+    erro.value = 'Carregue o perfil antes de editá-lo.';
+    return false;
   }
+
+  if (token == null || token.isEmpty) {
+    erro.value = 'Sessão expirada. Entre novamente.';
+    return false;
+  }
+
+  carregando.value = true;
+  erro.value = '';
+
+  try {
+    final dados = Map<String, dynamic>.from(
+      usuarioAtual.toJson(),
+    );
+
+    dados['nome'] = nome.trim();
+    dados['email'] = email.trim();
+
+    if (cpf != null) dados['cpf'] = cpf.trim();
+    if (telefone != null) dados['telefone'] = telefone.trim();
+    if (matricula != null) dados['matricula'] = matricula.trim();
+    if (departamento != null) {
+      dados['departamento'] = departamento.trim();
+    }
+    if (dataNascimento != null) {
+      dados['dataNascimento'] =
+          dataNascimento.toIso8601String().split('T').first;
+    }
+    if (genero != null) dados['genero'] = genero;
+    if (cep != null) dados['cep'] = cep.trim();
+    if (endereco != null) dados['endereco'] = endereco.trim();
+    if (cidadeUF != null) dados['cidadeUf'] = cidadeUF.trim();
+    if (contatoEmergencia != null) {
+      dados['contatoEmergencia'] = contatoEmergencia.trim();
+    }
+    if (tipoSanguineo != null) {
+      dados['tipoSanguineo'] = tipoSanguineo;
+    }
+    if (alergias != null) dados['alergias'] = alergias.trim();
+
+    final usuarioEditado = Usuario.fromJson(dados);
+
+    final response = await perfilService.atualizarPerfil(
+      usuarioEditado,
+      token,
+    );
+
+    if (response.isOk) {
+      usuario.value = response.body ?? usuarioEditado;
+      return true;
+    }
+
+    erro.value = 'Não foi possível atualizar o perfil.';
+    return false;
+  } catch (e) {
+    erro.value = 'Ocorreu um erro ao atualizar o perfil.';
+    return false;
+  } finally {
+    carregando.value = false;
+  }
+}
+
 }

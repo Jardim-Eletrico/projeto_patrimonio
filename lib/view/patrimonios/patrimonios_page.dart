@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:projeto_patrimonio/controller/patrimoniocontroller.dart';
+import 'package:projeto_patrimonio/routes/app_routes.dart';
 import 'package:projeto_patrimonio/widgets/menu_lateral.dart';
 import 'package:projeto_patrimonio/widgets/estatisticas_patrimonio_dialog.dart';
 import 'package:projeto_patrimonio/widgets/historico_patrimonio_dialog.dart';
@@ -69,7 +70,7 @@ class PatrimoniosPage extends GetView<Patrimoniocontroller> {
               height: 26,
               child: OutlinedButton(
                 onPressed: () {
-                  // Adicione aqui a navegação para completar o cadastro.
+                  Get.toNamed(AppRoutes.perfil);
                 },
                 style: OutlinedButton.styleFrom(
                   backgroundColor: Colors.transparent,

@@ -13,6 +13,20 @@ class PerfilService extends GetConnect {
     super.onInit();
   }
 
+
+Map<String, dynamic>? _extrairUsuario(dynamic dados) {
+  if (dados is! Map) return null;
+
+  final usuario = dados['user'];
+
+  if (usuario is Map) {
+    return Map<String, dynamic>.from(usuario);
+  }
+
+  return Map<String, dynamic>.from(dados);
+}
+
+
   Future<Response<Usuario>> obterPerfil(String accessToken) async {
     final response = await get<dynamic>(
       '/api/profile',
@@ -49,6 +63,8 @@ class PerfilService extends GetConnect {
 Future<Response<Usuario>> atualizarPerfil(
   Usuario usuario,
   String accessToken,
+
+  
 ) async {
   final response = await put<dynamic>(
     '/api/profile',
@@ -61,22 +77,16 @@ Future<Response<Usuario>> atualizarPerfil(
   debugPrint('Status da atualização: ${response.statusCode}');
   debugPrint('Resposta da atualização: ${response.body}');
 
-  final dados = response.body;
+  final dados = _extrairUsuario(response.body);
 
-  if (response.isOk && dados is Map) {
-    try {
-      final usuarioAtualizado = Usuario.fromJson(
-        Map<String, dynamic>.from(dados),
-      );
+  if (response.isOk && dados != null) {
+    final usuarioAtualizado = Usuario.fromJson(dados);
 
-      return Response<Usuario>(
-        statusCode: response.statusCode,
-        statusText: response.statusText,
-        body: usuarioAtualizado,
-      );
-    } catch (e) {
-      debugPrint('Erro ao converter usuário: $e');
-    }
+    return Response<Usuario>(
+      statusCode: response.statusCode,
+      statusText: response.statusText,
+      body: usuarioAtualizado,
+    );
   }
 
   return Response<Usuario>(
